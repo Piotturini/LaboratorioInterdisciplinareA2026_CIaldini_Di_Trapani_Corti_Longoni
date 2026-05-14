@@ -8,9 +8,19 @@ public class Utenti {
     private String cognome;
     private String username;
     private String password;
-    private Date Datadinascita;
+    private Date Data_di_nascita;
     private String luogoDomicilio;
     private String ruolo;
+
+    public Utenti(String nome, String cognome, String username, String password, Date data_di_nascita, String luogoDomicilio, String ruolo) {
+        this.nome = nome;
+        this.cognome = cognome;
+        this.username = username;
+        this.password = password;
+        Data_di_nascita = data_di_nascita;
+        this.luogoDomicilio = luogoDomicilio;
+        this.ruolo = ruolo;
+    }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -29,7 +39,7 @@ public class Utenti {
     }
 
     public void setDatadinascita(Date datadinascita) {
-        Datadinascita = datadinascita;
+        Data_di_nascita = datadinascita;
     }
 
     public void setLuogoDomicilio(String luogoDomicilio) {
@@ -57,7 +67,7 @@ public class Utenti {
     }
 
     public Date getDatadinascita() {
-        return Datadinascita;
+        return Data_di_nascita;
     }
 
     public String getLuogoDomicilio() {
