@@ -8,16 +8,16 @@ public class Utenti {
     private String cognome;
     private String username;
     private String password;
-    private Date Data_di_nascita;
+    private Date dataDiNascita;
     private String luogoDomicilio;
     private String ruolo;
 
-    public Utenti(String nome, String cognome, String username, String password, Date data_di_nascita, String luogoDomicilio, String ruolo) {
+    public Utenti(String nome, String cognome, String username, String password, Date dataDiNascita, String luogoDomicilio, String ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.username = username;
         this.password = password;
-        Data_di_nascita = data_di_nascita;
+        this.dataDiNascita = dataDiNascita;
         this.luogoDomicilio = luogoDomicilio;
         this.ruolo = ruolo;
     }
@@ -38,8 +38,8 @@ public class Utenti {
         this.password = password;
     }
 
-    public void setDatadinascita(Date datadinascita) {
-        Data_di_nascita = datadinascita;
+    public void setDataDiNascita(Date dataDiNascita) {
+        this.dataDiNascita = dataDiNascita;
     }
 
     public void setLuogoDomicilio(String luogoDomicilio) {
@@ -66,8 +66,8 @@ public class Utenti {
         return password;
     }
 
-    public Date getDatadinascita() {
-        return Data_di_nascita;
+    public Date getDataDiNascita() {
+        return dataDiNascita;
     }
 
     public String getLuogoDomicilio() {

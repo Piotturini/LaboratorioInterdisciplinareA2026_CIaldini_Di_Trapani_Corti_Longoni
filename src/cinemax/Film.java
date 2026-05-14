@@ -6,16 +6,16 @@ public class Film {
     private String regista;
     private int anno;
     private int durata;
-    private int eta_minima;
+    private int etaMinima;
     private double prezzo;
 
-    public Film(String titolo, String genere, String regista, int anno, int durata, int eta_minima, double prezzo) {
+    public Film(String titolo, String genere, String regista, int anno, int durata, int etaMinima, double prezzo) {
         this.titolo = titolo;
         this.genere = genere;
         this.regista = regista;
         this.anno = anno;
         this.durata = durata;
-        this.eta_minima = eta_minima;
+        this.etaMinima = etaMinima;
         this.prezzo = prezzo;
     }
 
@@ -39,8 +39,8 @@ public class Film {
         this.durata = durata;
     }
 
-    public void setEta_minima(int eta_minima) {
-        this.eta_minima = eta_minima;
+    public void setEtaMinima(int etaMinima) {
+        this.etaMinima = etaMinima;
     }
 
     public void setPrezzo(double prezzo) {
@@ -68,8 +68,8 @@ public class Film {
         return durata;
     }
 
-    public int getEta_minima() {
-        return eta_minima;
+    public int getEtaMinima() {
+        return etaMinima;
     }
 
     public double getPrezzo() {
