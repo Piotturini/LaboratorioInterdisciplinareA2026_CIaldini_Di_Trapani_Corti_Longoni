@@ -1,0 +1,1 @@
+Indicazioni per l'installazione e la compilazione del programma
