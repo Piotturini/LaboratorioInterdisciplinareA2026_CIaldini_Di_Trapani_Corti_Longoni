@@ -35,25 +35,34 @@ public class Proiezioni {
             br.readLine();
 
             while ((riga = br.readLine()) != null) {
-                String[] d = riga.split(",");
+                try {
+                    if (riga.trim().isEmpty()) continue;
+                    String[] d = riga.split(",");
 
-                if (d.length >= 0) {
-                    Proiezioni p = new Proiezioni(
-                            d[0],
-                            d[1],
-                            d[2],
-                            d[3],
-                            Integer.parseInt(d[4].trim()),
-                            Integer.parseInt(d[5].trim()),
-                            Integer.parseInt(d[6].trim()),
-                            Double.parseDouble(d[7].trim().replace(",", "."))
-                    );
+                    if (d.length >= 8) {
+                        for (int i = 0; i < d.length; i++) {
+                            d[i] = d[i].replace("\"", "").trim();
+                        }
 
-                    listaP.add(p);
+                        Proiezioni p = new Proiezioni(
+                                d[0],
+                                d[1],
+                                d[2],
+                                d[3],
+                                Integer.parseInt(d[4].trim()),
+                                Integer.parseInt(d[5].trim()),
+                                Integer.parseInt(d[6].trim()),
+                                Double.parseDouble(d[7].trim().replace(",", "."))
+                        );
+
+                        listaP.add(p);
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Errore riga ignorata: " + riga + " -> " + e.getMessage());
                 }
             }
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("Errore nel caricamento dati: " + e.getMessage());
+        }catch (IOException e){
+            System.out.println("errpre nella lettura del file" + e.getMessage());
         }
         return listaP;
     }
