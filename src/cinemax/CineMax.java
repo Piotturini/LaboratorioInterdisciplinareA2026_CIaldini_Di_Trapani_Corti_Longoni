@@ -1,7 +1,17 @@
 package cinemax;
 
+import java.util.List;
+
 public class CineMax {
-    public static void main(String[] args){
-        System.out.println("hello world");
+    public static void main(String[] args) {
+        String fileCsv = "data/proiezioni.csv";
+        List<Proiezioni> elenco = Proiezioni.caricaDaCSV(fileCsv);
+
+        System.out.println("ELENCO PROIEZIONI CARICATE");
+        for (Proiezioni p : elenco) {
+            System.out.println(p);
+        }
+
+        System.out.println("Totale proiezioni in memoria: " + elenco.size());
     }
 }
