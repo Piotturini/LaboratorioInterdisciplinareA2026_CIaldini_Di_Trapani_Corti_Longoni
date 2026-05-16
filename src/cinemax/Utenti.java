@@ -23,7 +23,6 @@
         private String ruolo;
 
         // COSTRUTTORI
-
         /**
          * Costruisce un oggetto che rappresenta l'Utente inizializzando
          * tutti i campi anagrafici e di accesso
