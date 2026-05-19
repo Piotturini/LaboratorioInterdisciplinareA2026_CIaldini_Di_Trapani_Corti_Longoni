@@ -33,7 +33,7 @@ public class CineMax {
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
 
         System.out.println("BENVENUTO NEL NOSTRO CINEMAX");
-        System.out.println("Scegli un'opzione (1: login utente || 2: registrati || 3: login bigliettaio):");
+        System.out.println("Scegli un'opzione (1: login utente || 2: registrati || 3: login bigliettaio || 4: ricerca proiezioni):");
 
         Scanner in = new Scanner(System.in);
         int scelta = in.nextInt();
@@ -86,6 +86,14 @@ public class CineMax {
                 nuovo.salvaSuFile(fileUtenti);
                 System.out.println("Registrazione completata con successo");
                 break; //Termina il case 2
+            case 3:
+                System.out.println("Login Bigliettaio (da implementare)");
+                break;
+            case 4:
+                //
+                System.out.println("Accesso Guest: ricerca proiezioni");
+                Proiezioni.cercaProiezione(fileCsv);
+                break;
 
             default:
                 System.out.println("Scelta non valida");
