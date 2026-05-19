@@ -17,20 +17,8 @@ import java.util.Date;
  * @version 1.0
  */
 public class Guest extends Utenti{
-
-    // COSTRUTTORI
-    /**
-     * Costruisce un nuovo oggetto Guest con i parametri ereditati
-     * dalla classe padre Utenti
-     * @param nome
-     * @param cognome
-     * @param username
-     * @param password
-     * @param data_di_nascita
-     * @param luogoDomicilio
-     * @param ruolo
-     */
-    public Guest(String nome, String cognome, String username, String password, Date data_di_nascita, String luogoDomicilio, String ruolo) {
-        super(nome, cognome, username, password, data_di_nascita, luogoDomicilio, ruolo);
+    
+    public Guest() {
+        super();
     }
 }

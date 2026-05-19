@@ -1,0 +1,2 @@
+Mario,Rossi,mario99,pass123,10/10/2000,Milano,Cliente
+Matteo,Corti,Cisafrulli,pass123456790,13/08/2026,Valmadrera,Cliente

@@ -80,7 +80,7 @@ public class Proiezioni {
                 try {
                     if (riga.trim().isEmpty()) continue;
                     String[] d = riga.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-
+    
                     if (d.length >= 8) {
                         for (int i = 0; i < d.length; i++) {
                             d[i] = d[i].replace("^\"|\"$", "").trim();

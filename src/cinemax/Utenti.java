@@ -44,6 +44,10 @@
             this.ruolo = ruolo;
         }
 
+        public Utenti(){
+            
+        }
+
         // METODI SETTER
 
         /**
