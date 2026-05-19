@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat; //serve per gestire la data in testo
  * </p>
  * @author ...
  * @see Utenti
- * @version 1.0
+ * @version 2.0.1
  */
 
 public class Registrati extends Utenti{
@@ -41,6 +41,15 @@ public class Registrati extends Utenti{
         super(nome, cognome, username, password, data_di_nascita, luogoDomicilio, ruolo);
     }
 
+    /**
+     * Salva i dati dell'utente corrente su un file di testo
+     * <p>
+     *     Il metodo scrive una riga contenente i dati dell'utente separati da virgole
+     *     Se il file esiste già, i nuovi dati vengono aggiunti alla fine senza sovrascrivere
+     *     quelli esistenti. La data di nascita viene formattata nel pattern dd/MM/yyyy
+     * </p>
+     * @param filepath il percoso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     */
     public void salvaSuFile(String filepath){
         try {
             // Scrittore di file. Il "true" serve per agigungere testo senza cancellare il vecchio
@@ -63,7 +72,23 @@ public class Registrati extends Utenti{
         }
     }
 
-    //Carica tutti gli utenti registrati del file txt
+    /**
+     * Carica l'elenco degli utenti registrati da un file di testo
+     * <p>
+     *     Il metodo legge il file riga per riga, ingnorando le righe vuote o i commenti
+     *     che iniziano con il carattere #. Per ogni riga valida, ricostruisce un oggetto
+     *     Registrazioni effettuando il parsing della data e dei campi stringa
+     * </p>
+     * <b>NOTE TECNICHE</b>
+     * <ul>
+     *     <li>In caso di errore nel parsing della data di nascita viene assegnata automaticamente
+     *     la data odierna
+     *     </li>
+     *     <li>Se il file non esiste, il metodo restituisce una lista vuota</li>
+     * </ul>
+     * @param filepath il percoso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     * @return Un ArrayList contenente tutti gli oggetti Registrati validi trovati nel file
+     */
     public static ArrayList<Registrati> caricaTutti (String filepath) {
         ArrayList<Registrati> lista = new ArrayList<>();
         SimpleDateFormat formattatore = new SimpleDateFormat("dd/MM/yyyy");

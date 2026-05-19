@@ -10,7 +10,7 @@ import java.util.Scanner;
  * Classe principale del progetto Cinemax
  * Gestisce l'avvio dell'applicazione...
  * @author ...
- * @version 1.0
+ * @version 2.0
  */
 public class CineMax {
     public static void main(String[] args) {

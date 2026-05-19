@@ -66,7 +66,7 @@ public class Proiezioni {
      *     <li>Gestione degli errori: se una riga non è corretta, viene saltata senza interrompere
      *     il caricamento del file</li>
      * </ul>
-     * @param percorsoFile
+     * @param percorsoFile percorso proiezioni.csv
      * @return Una {@link List} di oggetti {@link Proiezioni} caricati correttamente
      * @throws IOException Se si verifica un errore di accesso al file
      */
@@ -123,6 +123,23 @@ public class Proiezioni {
                 " | PREZZO: " + prezzo + "€";
     }
 
+    /**
+     * Esegue la ricerca tra le proiezioni caricato da File
+     * <p>
+     *     Il metodo permette all'utente di filtrare i risultato attraverso
+     *     diverse possibilità inserite da tastiera. Se un filtro viene lasciato vuoto
+     *     non viene applicata nessuna ricerca relativa
+     * </p>
+     * <b>Criteri di filtraggio supportati:</b>
+     * <ul>
+     *     <li>TITOLO (anche parziale</li>
+     *     <li>GENERE</li>
+     *     <li>INTERVALLO DATE</li>
+     *     <li>INTERVALLO PREZZO</li>
+     * </ul>
+     * @param percorsoFile percorso proiezioni.csv
+     * @see #caricaDaCSV(String) 
+     */
     public static void cercaProiezione(String percorsoFile) {
         // carichiamo i dati dal file con il metodo già creato
         List<Proiezioni> tutteLeProiezioni = caricaDaCSV(percorsoFile);
@@ -206,6 +223,10 @@ public class Proiezioni {
         }
     }
 
+    /**
+     * Restituisce la Data e l'ora della proiezione
+     * @return Una stringa contenente la data e l'ora
+     */
     public String getDataOra() {
         return dataOra;
     }
