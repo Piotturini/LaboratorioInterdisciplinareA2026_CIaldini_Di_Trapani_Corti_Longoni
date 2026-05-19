@@ -5,11 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
  * @author ...
- * @version 1.0.1
+ * @version 1.1.1
  */
 
 public class Proiezioni {
@@ -120,5 +121,88 @@ public class Proiezioni {
                 " | FILM: " + titolo +
                 " | GENERE: " + genere +
                 " | PREZZO: " + prezzo + "€";
+    }
+
+    public static void cercaProiezione(String percorsoFile) {
+        // carichiamo i dati dal file con il metodo già creato
+        List<Proiezioni> tutteLeProiezioni = caricaDaCSV(percorsoFile);
+
+        if (tutteLeProiezioni.isEmpty()) {
+            System.out.println("Nessuna Proiezione disponibile");
+            return;
+        }
+
+        Scanner in = new Scanner(System.in);
+
+        // Criteri di ricerca
+        System.out.println("Filtri di Ricerca (Premi INVIO per saltare un filtro)");
+
+        System.out.println("Cerca per titolo (anche parziale): ");
+        String filtroTitolo = in.nextLine().toLowerCase();
+
+        System.out.println("Cerca per genere: ");
+        String filtroGenere = in.nextLine().toLowerCase();
+
+        System.out.println("Intervallo di data - Inizio data");
+        String dataInizio = in.nextLine();
+
+        System.out.println("Intervallo di data - Fine data");
+        String dataFine = in.nextLine();
+
+        System.out.println("Intervallo di prezzo - Prezzo minimo");
+        String PrezzominStr = in.nextLine();
+        double PrezzoMin = PrezzominStr.isEmpty() ? 0 : Double.parseDouble(PrezzominStr.replace(",", "."));
+
+        System.out.println("Intervallo di prezzo - Prezzo massimo");
+        String PrezzomaxStr = in.nextLine();
+        double PrezzoMax = PrezzomaxStr.isEmpty() ? 0 : Double.parseDouble(PrezzomaxStr.replace("," , "."));
+
+        System.out.println("RISULTATI DELLE RICERCA: ");
+        int risultati = 0;
+
+        // ciclo per controllare ogni proiezione
+        for (Proiezioni p : tutteLeProiezioni) {
+            boolean corrisponde = true;
+
+            // Filtro Titolo
+            if (!filtroTitolo.isEmpty() && !p.titolo.toLowerCase().contains(filtroTitolo)) {
+                corrisponde = false;
+            }
+
+            // Filtro Genere
+            if (!filtroGenere.isEmpty() && !p.genere.equalsIgnoreCase(filtroGenere)) {
+                corrisponde = false;
+            }
+
+            // Filtro date
+            if (!dataInizio.isEmpty() && p.dataOra.compareTo(dataInizio) < 0) {
+                corrisponde = false;
+            }
+
+            if (!dataFine.isEmpty() && p.dataOra.compareTo(dataInizio) > 0) {
+                corrisponde = false;
+            }
+
+            // Filtro prezzo minimo
+            if (PrezzoMin > 0 && p.prezzo < PrezzoMin) {
+                corrisponde = false;
+            }
+
+            // Filtro prezzo Massimo
+            if (PrezzoMax > 0 && p.prezzo > PrezzoMax) {
+               corrisponde = false;
+            }
+
+            // se si passano i controlli stampiamo usando il toString()
+
+            if (corrisponde) {
+                System.out.println(p.toString());
+                risultati++;
+            }
+        }
+
+        if (risultati == 0) {
+            System.out.println("Nessuna proiezione trovata con i criteri inseriti");
+        }
     }
 }
