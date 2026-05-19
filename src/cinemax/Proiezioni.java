@@ -24,6 +24,8 @@ public class Proiezioni {
     private int durata;
     private int etaMinima;
     private double prezzo;
+    private static final int capienzaSala = 200;
+    private int postiPrenotati = 0;
 
     // COSTRUTTORI
     /**
@@ -175,7 +177,8 @@ public class Proiezioni {
         double PrezzoMax = PrezzomaxStr.isEmpty() ? 0 : Double.parseDouble(PrezzomaxStr.replace("," , "."));
 
         System.out.println("RISULTATI DELLE RICERCA: ");
-        int risultati = 0;
+
+        List<Proiezioni> filmTrovati = new ArrayList<>();
 
         // ciclo per controllare ogni proiezione
         for (Proiezioni p : tutteLeProiezioni) {
@@ -196,7 +199,7 @@ public class Proiezioni {
                 corrisponde = false;
             }
 
-            if (!dataFine.isEmpty() && p.dataOra.compareTo(dataInizio) > 0) {
+            if (!dataFine.isEmpty() && p.dataOra.compareTo(dataFine) > 0) {
                 corrisponde = false;
             }
 
@@ -213,13 +216,29 @@ public class Proiezioni {
             // se si passano i controlli stampiamo usando il toString()
 
             if (corrisponde) {
-                System.out.println(p.toString());
-                risultati++;
+                filmTrovati.add(p);
             }
         }
 
-        if (risultati == 0) {
-            System.out.println("Nessuna proiezione trovata con i criteri inseriti");
+        // chiedere all'utente di selezionare un film dalla lista numerata
+        if (filmTrovati.isEmpty()) {
+            System.out.println("Nessuna proiezione trovata con i criteri inseriti.");
+        } else {
+            // stampa numerata
+            for (int i = 0; i < filmTrovati.size(); i++) {
+                System.out.println((i + 1) + ". " + filmTrovati.get(i).toString());
+            }
+
+            // domanda all'utente
+            System.out.println("Inserisci il numero del film per vederne i dettagli: ");
+            int scelta = in.nextInt();
+
+            if (scelta > 0 && scelta <= filmTrovati.size()) {
+                Proiezioni filmScelto = filmTrovati.get(scelta - 1);
+                visualizzaProiezione(filmScelto);
+            } else {
+                System.out.println("Numero non valido.");
+            }
         }
     }
 
@@ -229,5 +248,29 @@ public class Proiezioni {
      */
     public String getDataOra() {
         return dataOra;
+    }
+    public int getPostiLiberi() {
+        return capienzaSala - postiPrenotati;
+    }
+
+    public static void visualizzaProiezione(Proiezioni p) {
+        //caratteristiche del film
+        System.out.println("Titolo: " + p.titolo);
+        System.out.println("Genere: " + p.genere);
+        System.out.println("Regista: " + p.regista);
+        System.out.println("Anno: " + p.anno);
+        System.out.println("Durata: " + p.durata + " minuti");
+
+        //data ora e costo della prenotazione
+        System.out.println("In programma: " + p.dataOra);
+        System.out.println("Prezzo: " + p.prezzo + " €");
+
+        //calcolo dei posti liberi
+        int liberi = p.getPostiLiberi();
+        System.out.println("Posti disponibili: " + liberi + " su " + capienzaSala);
+
+        if (liberi == 0) {
+            System.out.println("Posti esauriti per la proiezione selezionata");
+        }
     }
 }
