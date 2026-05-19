@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Rappresenta il profilo di un Bigliettaio all'interno del sistema Cinemax
  * <p>
- *     Questa classe estende la classe Utenti e definisce le operaizoni specifiche che
+ *     Questa classe estende la classe Utenti e definisce le operazioni specifiche che
  *     un operatore di biglietteria può compiere, tra cui:
  *     <ul>
  *         <li>Visualizzare le prenotazioni per la giornata odierna</li>

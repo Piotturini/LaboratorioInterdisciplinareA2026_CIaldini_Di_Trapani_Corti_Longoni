@@ -14,8 +14,8 @@ import java.text.SimpleDateFormat; //serve per gestire la data in testo
  *     <ul>
  *         <li>La possibilità di inserire una prenotazione</li>
  *         <li>Visualizzare le proprie prenotazioni</li>
- *         <li>Effetuare la modifica e la cancellazione delle proprie prenotazioni</li>
- *         <li>Effetuare il Logout</li>
+ *         <li>Effettuare la modifica e la cancellazione delle proprie prenotazioni</li>
+ *         <li>Effettuare il Logout</li>
  *     </ul>
  * </p>
  * @author ...
@@ -48,7 +48,7 @@ public class Registrati extends Utenti{
      *     Se il file esiste già, i nuovi dati vengono aggiunti alla fine senza sovrascrivere
      *     quelli esistenti. La data di nascita viene formattata nel pattern dd/MM/yyyy
      * </p>
-     * @param filepath il percoso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     * @param filepath il percorso del file (data/utenti_registrati.txt) dove salvare le informazioni
      */
     public void salvaSuFile(String filepath){
         try {
@@ -75,7 +75,7 @@ public class Registrati extends Utenti{
     /**
      * Carica l'elenco degli utenti registrati da un file di testo
      * <p>
-     *     Il metodo legge il file riga per riga, ingnorando le righe vuote o i commenti
+     *     Il metodo legge il file riga per riga, ignorando le righe vuote o i commenti
      *     che iniziano con il carattere #. Per ogni riga valida, ricostruisce un oggetto
      *     Registrazioni effettuando il parsing della data e dei campi stringa
      * </p>
@@ -86,7 +86,7 @@ public class Registrati extends Utenti{
      *     </li>
      *     <li>Se il file non esiste, il metodo restituisce una lista vuota</li>
      * </ul>
-     * @param filepath il percoso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     * @param filepath il percorso del file (data/utenti_registrati.txt) dove salvare le informazioni
      * @return Un ArrayList contenente tutti gli oggetti Registrati validi trovati nel file
      */
     public static ArrayList<Registrati> caricaTutti (String filepath) {

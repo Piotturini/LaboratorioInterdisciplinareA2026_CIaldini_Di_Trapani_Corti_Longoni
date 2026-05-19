@@ -17,15 +17,6 @@ public class CineMax {
         String fileCsv = "data/proiezioni.csv";
         List<Proiezioni> elenco = Proiezioni.caricaDaCSV(fileCsv);
 
-        /*
-        System.out.println("ELENCO PROIEZIONI CARICATE");
-        for (Proiezioni p : elenco) {
-            System.out.println(p);
-        }
-
-        System.out.println("Totale proiezioni in memoria: " + elenco.size());
-        */
-
         String fileUtenti = "data/utenti_registrati.txt";
         String fileBigliettai = "data/bigliettai.txt";
 

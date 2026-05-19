@@ -1,7 +1,7 @@
 package cinemax;
 
 /**
- * Rappresenta un film all'interno del sistema di gesione Cinemax.
+ * Rappresenta un film all'interno del sistema di gestione Cinemax.
  * La classe memorizza informazioni dettagliate come titolo, genere,
  * dettagli tecnici e registrazioni sull'età
  * @author ...
@@ -21,7 +21,7 @@ public class Film {
 
     // COSTRUTTORI
     /**
-     * Costrusce un oggetto che rappresenta la struttura dei Film
+     * Costruisce un oggetto che rappresenta la struttura dei Film
      * con tutti i parametri specificati
      * @param titolo Il titolo del film
      * @param genere Il genere del film
@@ -68,7 +68,7 @@ public class Film {
     }
 
     /**
-     * Imposta l'anno di nascia del film
+     * Imposta l'anno del film
      * @param anno L'anno espresso come intero
      */
     public void setAnno(int anno) {
@@ -110,7 +110,7 @@ public class Film {
     }
 
     /**
-     * Resituisce il genere del film
+     * Restituisce il genere del film
      * @return Il genere corrente
      */
     public String getGenere() {
@@ -118,7 +118,7 @@ public class Film {
     }
 
     /**
-     * Restitisce il nome del regista
+     * Restituisce il nome del regista
      * @return Il nome del regista
      */
     public String getRegista() {

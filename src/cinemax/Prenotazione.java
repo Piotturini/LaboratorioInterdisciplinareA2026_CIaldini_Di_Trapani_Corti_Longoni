@@ -16,7 +16,7 @@ public class Prenotazione {
     // CAMPI
     private String codice;
     private  String usernamenCliente;
-    private Proiezioni proiezione;//associone diretta alla classe Proiezioni
+    private Proiezioni proiezione;//associazione diretta alla classe Proiezioni
     private Film film; // associazione diretta alla classe film
     private int numBiglietti;
 
@@ -25,7 +25,7 @@ public class Prenotazione {
     /**
      * Costruttore per creare una nuova prenotazione
      * Genere automaticamente un codice univoco tramite il metodo {@link #GeneraCodiceUnivoco()}
-     * @param usernameCliente Indetificativo del cliente
+     * @param usernameCliente Identificativo del cliente
      * @param proiezioni Oggetto proiezioni selezionato
      * @param film Oggetto film associato
      * @param numBiglietti Quantità di biglietti da acquistare
@@ -39,7 +39,7 @@ public class Prenotazione {
     }
 
     /**
-     * Costruttore di caricamente utilizzato per costruire oggetti
+     * Costruttore di caricamento utilizzato per costruire oggetti
      * Questo costruttore accetta un codice preesistente
      * @param codice Il codice univoco già esistente
      * @param usernameCliente Identificativo del cliente
@@ -106,7 +106,7 @@ public class Prenotazione {
     }
 
     /**
-     * Restitusce lo username del cliente
+     * Restituisce lo username del cliente
      * @return Stringa dello username
      */
     public String getUsernamenCliente() {
@@ -122,7 +122,7 @@ public class Prenotazione {
     }
 
     /**
-     * Restiutuisce l'oggetto film associato
+     * Restituisce l'oggetto film associato
      * @return Oggetto Film preso in considerazione
      */
     public Film getFilm() {

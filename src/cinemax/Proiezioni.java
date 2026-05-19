@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
  * @author ...
- * @version 1.1.1
+ * @version 1.2.1
  */
 
 public class Proiezioni {
@@ -30,7 +30,7 @@ public class Proiezioni {
     // COSTRUTTORI
     /**
      * Costruisce un oggetto che rappresenta tutte le Proiezioni inizializzando
-     * tutti i campi di informazione relativi ai film
+     * tutti i campi di informazione relativi al film
      * @param dataOra La data e l'ora del film
      * @param titolo Il titolo del film
      * @param genere Il genere del film
@@ -54,13 +54,13 @@ public class Proiezioni {
     // METODI
 
     /**
-     * Carica un eleneco di proiezioni di un film in formato CSV
+     * Carica un elenco di proiezioni di un film in formato CSV
      * <p>
      *    Il metodo legge il file riga per riga, ignora l'intestazione
      *    e utilizza un espressione ottimizzata per gestire lo le virgole
      *    con lo split
      * </p>
-     * <strong>Logica di eleborazione:</strong>
+     * <strong>Logica di elaborazione:</strong>
      * <ul>
      *     <li>Salto della riga</li>
      *     <li>Parsing dei campi con gestione dei delimitatori</li>
@@ -113,7 +113,7 @@ public class Proiezioni {
     }
 
     /**
-     * Restiuisce una rappresentazione testuale formattata della proiezione
+     * Restituisce una rappresentazione testuale formattata della proiezione
      * @return Una stringa contenente data/ora, titolo, genere e prezzo (formattati)
      */
     @Override
@@ -249,10 +249,26 @@ public class Proiezioni {
     public String getDataOra() {
         return dataOra;
     }
+
+    /**
+     * Restituisce i posti liberi per la Proiezione selezionata
+     * Il metodo fa una differenza fra la capienza della sala e i posti prenotati
+     * @return Un intero relativo ai posti liberi
+     */
     public int getPostiLiberi() {
         return capienzaSala - postiPrenotati;
     }
 
+    /**
+     * Visualizza sul terminale tutte le proiezioni in base ai criteri di ricerca.
+     * Successivamente l'utente può scegliere un film per avere i dettagli completi di esso trc cui:
+     * <ul>
+     *     <li>Dati del film: Titolo, genere, regista, anno e durata</li>
+     *     <li>Dati logistici: Data e ora della programmazione e prezzo del biglietto</li>
+     *     <li>Stato della sala: Calcola quanti posti sono disponibili</li>
+     * </ul>
+     * @param p L'oggetto Proiezioni di cui mostrare i dettagli
+     */
     public static void visualizzaProiezione(Proiezioni p) {
         //caratteristiche del film
         System.out.println("Titolo: " + p.titolo);
