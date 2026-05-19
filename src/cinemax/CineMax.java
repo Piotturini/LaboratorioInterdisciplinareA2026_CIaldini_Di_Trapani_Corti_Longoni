@@ -33,7 +33,7 @@ public class CineMax {
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
 
         System.out.println("BENVENUTO NEL NOSTRO CINEMAX");
-        System.out.println("Scegli un'opzione (1: login utente || 2: registrati || 3: login bigliettaio || 4: ricerca proiezioni):");
+        System.out.println("Scegli un'opzione (1: login utente || 2: registrati || 3: login bigliettaio || 4: informazioni sulle proiezioni):");
 
         Scanner in = new Scanner(System.in);
         int scelta = in.nextInt();
