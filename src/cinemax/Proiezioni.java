@@ -205,4 +205,8 @@ public class Proiezioni {
             System.out.println("Nessuna proiezione trovata con i criteri inseriti");
         }
     }
+
+    public String getDataOra() {
+        return dataOra;
+    }
 }
