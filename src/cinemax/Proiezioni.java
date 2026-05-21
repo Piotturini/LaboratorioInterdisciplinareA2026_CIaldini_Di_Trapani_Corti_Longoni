@@ -1,6 +1,7 @@
 package cinemax;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -115,6 +116,23 @@ public class Proiezioni {
             System.out.println("errore nella lettura del file" + e.getMessage());
         }
         return listaP;
+    }
+
+    // Sovrascrive il file CSV con i dati presenti nella lista
+    public static void salvasuCSV(String percorsoFile, List<Proiezioni> lista) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(percorsoFile))) {
+            bw.write("dataOra,titolo,genere,regista,anno,durata,etaMinima,prezzo");
+            bw.newLine();
+
+            for (Proiezioni p : lista) {
+                String riga = String.format("%s, %s, %s, %s, %d, %d, %d, %2.f",
+                        p.dataOra, p.titolo, p.genere, p.anno, p.durata, p.etaMinima, p.prezzo);
+                bw.write(riga.replace(".",","));
+                bw.newLine();
+            }
+        } catch (IOException e)  {
+            System.out.println("Errore durante il salvataggio" + e.getMessage());
+        }
     }
 
     /**
@@ -292,6 +310,38 @@ public class Proiezioni {
         return prezzo;
     }
 
+    public void setDataOra(String dataOra) {
+        this.dataOra = dataOra;
+    }
+
+    public void setTitolo(String titolo) {
+        this.titolo = titolo;
+    }
+
+    public void setPrezzo(double prezzo) {
+        this.prezzo = prezzo;
+    }
+
+    public void setGenere(String genere) {
+        this.genere = genere;
+    }
+
+    public void setRegista(String regista) {
+        this.regista = regista;
+    }
+
+    public void setAnno(int anno) {
+        this.anno = anno;
+    }
+
+    public void setDurata(int durata) {
+        this.durata = durata;
+    }
+
+    public void setEtaMinima(int etaMinima) {
+        this.etaMinima = etaMinima;
+    }
+
     /**
      * Visualizza sul terminale tutte le proiezioni in base ai criteri di ricerca.
      * Successivamente l'utente può scegliere un film per avere i dettagli completi di esso trc cui:
@@ -346,10 +396,9 @@ public class Proiezioni {
         in.nextLine();
 
         System.out.print("Costo del biglietto (es. 7.50): ");
-        String Prezzostr2 = in.nextLine();
-        double prezzoFormattato = Prezzostr2.isEmpty() ? 0 : Double.parseDouble(Prezzostr2.replace(",", "."));
+        double prezzo = Double.parseDouble(in.nextLine().replace(",", "."));
 
-        System.out.print("Data e Ora di inizio (formato AAAA-MM-GG HH:mm:ss): ");
+        System.out.print("Data e Ora di inizio (formato yyyy-MM-dd HH:mm:ss): ");
         String dataOraStr = in.nextLine();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -357,16 +406,20 @@ public class Proiezioni {
         try {
             inizioNuova = LocalDateTime.parse(dataOraStr, formatter);
         } catch (DateTimeParseException e) {
-            System.out.println("Errore: Formato data non valido. Inserimento annulato.");
+            System.out.println("Errore: Formato data non valido. Inserimento annullato.");
             return;
         }
 
         LocalDateTime fineNuova = inizioNuova.plusMinutes(durata);
         boolean sovrapposizione = false;
 
+        // Controllo sovrapposizione
         for (Proiezioni p : elenco) {
             try {
-                LocalDateTime inizioEsistente = LocalDateTime.parse(p.getDataOra(), formatter);
+                // puliamo la stringa togliendo eventuali virgolette che potrebbero essere nel CSV
+                String dataPulita = p.getDataOra().replace("\"", "").trim();
+
+                LocalDateTime inizioEsistente = LocalDateTime.parse(dataPulita, formatter);
                 LocalDateTime fineEsistente = inizioEsistente.plusMinutes(p.durata);
 
                 if (inizioNuova.isBefore(fineEsistente) && fineNuova.isAfter(inizioEsistente)) {
@@ -374,7 +427,8 @@ public class Proiezioni {
                     break;
                 }
             } catch (DateTimeParseException e) {
-
+                System.out.println("Errore --> " + e.getMessage());
+                return;
             }
         }
             if(sovrapposizione) {
@@ -382,12 +436,12 @@ public class Proiezioni {
                 return;
             }
 
-            Proiezioni nuovaProiezione = new Proiezioni(dataOraStr, titolo, genere, regista, anno, durata, etaMinima, prezzoFormattato);
+            Proiezioni nuovaProiezione = new Proiezioni(dataOraStr, titolo, genere, regista, anno, durata, etaMinima, prezzo);
             elenco.add(nuovaProiezione);
 
             try (PrintWriter printWriter = new PrintWriter(new FileWriter(percorsoFIle,  true))) {
 
-                String rigaCsv = String.format("\"%s\",\"%s\",%s,\"%s\",%d,%d,%d,%s",
+                String rigaCsv = String.format("%s,%s,%s,%s,%d,%d,%d,%.2f",
                         nuovaProiezione.getDataOra(),
                         nuovaProiezione.titolo,
                         nuovaProiezione.genere,
@@ -395,13 +449,99 @@ public class Proiezioni {
                         nuovaProiezione.anno,
                         nuovaProiezione.durata,
                         nuovaProiezione.etaMinima,
-                        prezzoFormattato);
+                        prezzo);
 
                 printWriter.println(rigaCsv);
-                System.out.println("Successo: La nuova proiezione è stata registrata e salvata nel database csv!");
+                System.out.println("Proiezione salvato con successo");
 
             } catch (IOException e) {
                 System.out.println("Errore critico: Impossibile scrivere nel file delle proiezioni.");
             }
         }
+
+    public static void modificaProiezione(String percorsoFile) {
+        List<Proiezioni> elenco = caricaDaCSV(percorsoFile);
+        if (elenco.isEmpty()) {
+            return;
+        }
+
+        Scanner in = new Scanner(System.in);
+
+        // Mostriamo l'elenco numerato
+        System.out.println("Seleziona il numero della proiezione da modificare:");
+        for (int i = 0; i < elenco.size(); i++) {
+            System.out.println((i + 1) + ". " + elenco.get(i).titolo);
+        }
+
+        int scelta = in.nextInt();
+        in.nextLine(); // pulizia buffer
+
+        if (scelta > 0 && scelta <= elenco.size()) {
+            Proiezioni p = elenco.get(scelta - 1);
+
+            // Controllo vincolo: nessuna prenotazione
+            if (p.postiPrenotati > 0) {
+                System.out.println("Impossibile modificare la proiezione: ci sono già" + p.postiPrenotati + " posti prenotati");
+                return;
+            }
+
+            // Inserimento dei nuovi dati
+            System.out.println("Modifica di: " + p.getTitolo());
+
+            System.out.println("Nuovo Titolo (premi INVIO per non cambiarlo): ");
+            String nuovoTitolo = in.nextLine();
+            if (!nuovoTitolo.isEmpty()) {
+                p.setTitolo(nuovoTitolo);
+            }
+
+            System.out.println("Nuovo Genere (preme INVIO per non cambiarlo): ");
+            String nuovoGenere = in.nextLine();
+            if (!nuovoGenere.isEmpty()) {
+                p.setGenere(nuovoGenere);
+            }
+
+            System.out.println("Nuovo Regista (premi INVIO per non cambiarlo): ");
+            String nuovoRegista = in.nextLine();
+            if (!nuovoRegista.isEmpty()) {
+                p.setRegista(nuovoRegista);
+            }
+
+            System.out.println("Nuovo anno (premi INVIO per non cambiarlo): ");
+            int nuovoAnno = in.nextInt();
+            if (nuovoAnno > 0) {
+                p.setAnno(nuovoAnno);
+            }
+
+            System.out.println("Nuova Durata (premi INVIO per non cambiarlo): ");
+            int nuovaDurata = in.nextInt();
+            if (nuovaDurata > 0) {
+                p.setDurata(nuovaDurata);
+            }
+
+            System.out.println("Nuova età minima (premi INVIO per non cambiarlo): ");
+            int nuovaEtaMinima = in.nextInt();
+            if (nuovaEtaMinima >= 0) {
+                p.setEtaMinima(nuovaEtaMinima);
+            }
+
+            System.out.println("Nuovo Prezzo (premi INVIO per non cambiarlo): ");
+            double nuovoPrezzo = in.nextDouble();
+            if (nuovoPrezzo > 0) {
+                p.setPrezzo(nuovoPrezzo);
+            }
+
+            System.out.println("Nuova Data/Ora (premi INVIO per non cambiarlo): ");
+            String nuovaData = in.nextLine();
+            if (!nuovaData.isEmpty()) {
+                p.setDataOra(nuovaData);
+            }
+
+            // Salvataggio definitivo
+            salvasuCSV(percorsoFile, elenco);
+            System.out.println("Proiezione completata con successo");
+
+        } else {
+            System.out.println("Scelta non valida!");
+        }
+    }
 }

@@ -106,7 +106,7 @@ public class Prenotazione {
             return false;
         }
         // controlliamo disponibilita posti nella sala
-        int postiDisponibili = this.proiezione.getPostiLiberi() +  this.numBiglietti;
+        int postiDisponibili = this.proiezione.getPostiLiberi() + this.numBiglietti;
         if (nuoviBiglietti > postiDisponibili){
             System.out.println("impossibile modificare; nella nuova proiezione non sono disponibile abbastanza posti");
             return false;
