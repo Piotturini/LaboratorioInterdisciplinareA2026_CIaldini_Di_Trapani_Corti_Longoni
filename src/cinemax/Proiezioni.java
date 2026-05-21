@@ -16,7 +16,7 @@ import java.util.Scanner;
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
  * @author ...
- * @version 1.2.1
+ * @version 1.4.1
  */
 
 public class Proiezioni {

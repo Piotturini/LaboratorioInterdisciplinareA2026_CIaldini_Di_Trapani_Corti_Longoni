@@ -14,7 +14,7 @@ import java.util.UUID;
  * La classe gestisce la generazione di codici univoci, il calcolo del costo totale
  * e la logica di validazione temporale delle modifiche
  * @author ...
- * @version 1.0
+ * @version 1.4
  */
 public class Prenotazione {
 
