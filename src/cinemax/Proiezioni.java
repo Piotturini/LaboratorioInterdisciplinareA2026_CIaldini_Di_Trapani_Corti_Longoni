@@ -2,6 +2,11 @@ package cinemax;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -317,4 +322,86 @@ public class Proiezioni {
             System.out.println("Posti esauriti per la proiezione selezionata");
         }
     }
+
+    public static void aggiungiProiezione(Scanner in, String percorsoFIle, List<Proiezioni> elenco){
+        System.out.println("INSERISCI UNA NUOVA PROIEZIONE");
+
+        System.out.print("Titolo del film: ");
+        String titolo = in.nextLine();
+
+        System.out.print("Genere: ");
+        String genere = in.nextLine();
+
+        System.out.print("Regista: ");
+        String regista = in.nextLine();
+
+        System.out.print("Anno di uscita: ");
+        int anno = in.nextInt();
+
+        System.out.print("Durata (in minuti): ");
+        int durata = in.nextInt();
+
+        System.out.print("Età minima consentita (0 se per tutti): ");
+        int etaMinima = in.nextInt();
+        in.nextLine();
+
+        System.out.print("Costo del biglietto (es. 7.50): ");
+        String Prezzostr2 = in.nextLine();
+        double prezzoFormattato = Prezzostr2.isEmpty() ? 0 : Double.parseDouble(Prezzostr2.replace(",", "."));
+
+        System.out.print("Data e Ora di inizio (formato AAAA-MM-GG HH:mm:ss): ");
+        String dataOraStr = in.nextLine();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime inizioNuova;
+        try {
+            inizioNuova = LocalDateTime.parse(dataOraStr, formatter);
+        } catch (DateTimeParseException e) {
+            System.out.println("Errore: Formato data non valido. Inserimento annulato.");
+            return;
+        }
+
+        LocalDateTime fineNuova = inizioNuova.plusMinutes(durata);
+        boolean sovrapposizione = false;
+
+        for (Proiezioni p : elenco) {
+            try {
+                LocalDateTime inizioEsistente = LocalDateTime.parse(p.getDataOra(), formatter);
+                LocalDateTime fineEsistente = inizioEsistente.plusMinutes(p.durata);
+
+                if (inizioNuova.isBefore(fineEsistente) && fineNuova.isAfter(inizioEsistente)) {
+                    sovrapposizione = true;
+                    break;
+                }
+            } catch (DateTimeParseException e) {
+
+            }
+        }
+            if(sovrapposizione) {
+                System.out.println("Errore: L'orario inserito si sovrappone con un'altra proiezione già a palinsesto!");
+                return;
+            }
+
+            Proiezioni nuovaProiezione = new Proiezioni(dataOraStr, titolo, genere, regista, anno, durata, etaMinima, prezzoFormattato);
+            elenco.add(nuovaProiezione);
+
+            try (PrintWriter printWriter = new PrintWriter(new FileWriter(percorsoFIle,  true))) {
+
+                String rigaCsv = String.format("\"%s\",\"%s\",%s,\"%s\",%d,%d,%d,%s",
+                        nuovaProiezione.getDataOra(),
+                        nuovaProiezione.titolo,
+                        nuovaProiezione.genere,
+                        nuovaProiezione.regista,
+                        nuovaProiezione.anno,
+                        nuovaProiezione.durata,
+                        nuovaProiezione.etaMinima,
+                        prezzoFormattato);
+
+                printWriter.println(rigaCsv);
+                System.out.println("Successo: La nuova proiezione è stata registrata e salvata nel database csv!");
+
+            } catch (IOException e) {
+                System.out.println("Errore critico: Impossibile scrivere nel file delle proiezioni.");
+            }
+        }
 }
