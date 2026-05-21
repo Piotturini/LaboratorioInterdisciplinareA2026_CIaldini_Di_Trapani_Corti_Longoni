@@ -23,7 +23,7 @@ public class CineMax {
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
 
         System.out.println("BENVENUTO NEL NOSTRO CINEMAX");
-        System.out.println("Scegli un'opzione (1: login utente || 2: registrati || 3: login bigliettaio || 4: informazioni sulle proiezioni):");
+        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest):");
 
         Scanner in = new Scanner(System.in);
         int scelta = in.nextInt();
@@ -32,22 +32,70 @@ public class CineMax {
         switch (scelta) {
             case 1:
                 //LOGIN UTENTE
-                System.out.print("Username: ");
-                String user = in.nextLine();
-                System.out.print("Password: ");
-                String pass = in.nextLine();
+                System.out.println("Come vorresti accedere? (1: Utente || 2: bigliettaio || 3: proiezionista): ");
+                int scelta2 = in.nextInt();
+                in.nextLine();
+                switch (scelta2) {
+                    case 1:
+                        System.out.println("Username: ");
+                        String user = in.nextLine();
+                        System.out.println("Password: ");
+                        String pass = in.nextLine();
 
-                boolean trovato = false;
-                for (Registrati u : listaUtenti) {
-                    if (u.getUsername().equals(user) && u.getPassword().equals(pass)) {
-                        trovato = true;
-                        break;
+                        boolean trovato = false;
+                        for (Registrati u : listaUtenti) {
+                            if (u.getUsername().equals(user) && u.getPassword().equals(pass) && u.getRuolo().equalsIgnoreCase("Cliente")) {
+                                trovato = true;
+                                break;
+                            }
+                        }
+
+                        if (trovato) System.out.println("Login Utente riuscito!");
+                        else System.out.println("Username o Password errati.");
+                        break; //Termina il case 1
+
+                    case 2:
+
+                        System.out.println("Username: ");
+                        String user2 = in.nextLine();
+                        System.out.println("Password: ");
+                        String pass2 = in.nextLine();
+
+                        boolean trovato2 = false;
+                        for (Registrati u : listaUtenti) {
+                            if (u.getUsername().equals(user2) && u.getPassword().equals(pass2) && u.getRuolo().equalsIgnoreCase("Bigliettaio")) {
+                                trovato2 = true;
+                                break;
+                            }
+                        }
+                        if (trovato2) System.out.println("Login Bigliettaio riuscito!");
+                        else System.out.println("Username o Password errati.");
+                        break; //Termina il case 2
+                    case 3:
+
+                        System.out.println("Username: ");
+                        String user3 = in.nextLine();
+                        System.out.println("Password: ");
+                        String pass3 = in.nextLine();
+
+                        boolean trovato3 = false;
+                        for (Registrati u : listaUtenti) {
+                            if (u.getUsername().equals(user3) && u.getPassword().equals(pass3) && u.getRuolo().equalsIgnoreCase("Proiezionista"))
+                            {
+                                trovato3 = true;
+                                break;
+                            }
+                        }
+
+                        if (trovato3) System.out.println("Login Proiezionista riuscito!");
+                        else System.out.println("Username o Password errati.");
+                        break; //Termina il case 3
+                    default:
+                        System.out.println("Scelta non valida");
                     }
-                }
-                if (trovato) System.out.println("Login Utente riuscito!");
-                else System.out.println("Username o Password errati.");
-                break; //Termina il case 1
-            case 2:
+                    break;
+
+                case 2:
                 //Registrazione utente
                 System.out.print("Nome "); String nome = in.nextLine();
                 System.out.print("Cognome "); String cognome = in.nextLine();
@@ -77,13 +125,7 @@ public class CineMax {
                 System.out.println("Registrazione completata con successo");
                 break; //Termina il case 2
             case 3:
-                System.out.println("Login Bigliettaio (da implementare)");
-                break;
-            case 4:
-                //
-                System.out.println("Accesso Guest: ricerca proiezioni");
-                Proiezioni.cercaProiezione(fileCsv);
-                break;
+
 
             default:
                 System.out.println("Scelta non valida");
