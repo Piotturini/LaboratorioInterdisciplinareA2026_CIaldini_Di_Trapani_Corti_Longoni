@@ -259,6 +259,34 @@ public class Proiezioni {
         return capienzaSala - postiPrenotati;
     }
 
+    public String getTitolo() {
+        return titolo;
+    }
+
+    public String getGenere() {
+        return genere;
+    }
+
+    public String getRegista() {
+        return regista;
+    }
+
+    public int getAnno() {
+        return anno;
+    }
+
+    public int getDurata() {
+        return durata;
+    }
+
+    public int getEtaMinima() {
+        return etaMinima;
+    }
+
+    public double getPrezzo() {
+        return prezzo;
+    }
+
     /**
      * Visualizza sul terminale tutte le proiezioni in base ai criteri di ricerca.
      * Successivamente l'utente può scegliere un film per avere i dettagli completi di esso trc cui:
