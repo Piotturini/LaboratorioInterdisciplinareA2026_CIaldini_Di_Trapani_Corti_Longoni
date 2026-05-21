@@ -11,7 +11,7 @@
      * @author ...
      * @version 1.0
      */
-    public class Utenti {
+    public abstract class Utenti {
 
         // CAMPI
         private String nome;

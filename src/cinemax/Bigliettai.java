@@ -18,7 +18,7 @@ import java.util.Date;
  * @version 1.0
  */
 
-public class Bigliettai extends Utenti{
+public  class Bigliettai extends Utenti{
 
     // COSTRUTTORI
     /**

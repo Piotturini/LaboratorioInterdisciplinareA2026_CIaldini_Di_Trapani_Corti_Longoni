@@ -11,6 +11,7 @@ import java.time.format.DateTimeParseException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -125,9 +126,9 @@ public class Proiezioni {
             bw.newLine();
 
             for (Proiezioni p : lista) {
-                String riga = String.format("%s, %s, %s, %s, %d, %d, %d, %2.f",
-                        p.dataOra, p.titolo, p.genere, p.anno, p.durata, p.etaMinima, p.prezzo);
-                bw.write(riga.replace(".",","));
+                String riga = String.format(Locale.US,"\"%s\",\"%s\",\"%s\",\"%s\",%d,%d,%d,%.2f",
+                        p.dataOra, p.titolo, p.genere,p.regista, p.anno, p.durata, p.etaMinima, p.prezzo);
+                bw.write(riga);
                 bw.newLine();
             }
         } catch (IOException e)  {
@@ -254,13 +255,17 @@ public class Proiezioni {
 
             // domanda all'utente
             System.out.println("Inserisci il numero del film per vederne i dettagli: ");
-            int scelta = in.nextInt();
+            try {
+                int scelta = Integer.parseInt(in.nextLine().trim());
 
-            if (scelta > 0 && scelta <= filmTrovati.size()) {
-                Proiezioni filmScelto = filmTrovati.get(scelta - 1);
-                visualizzaProiezione(filmScelto);
-            } else {
-                System.out.println("Numero non valido.");
+                if (scelta > 0 && scelta <= filmTrovati.size()) {
+                    Proiezioni filmScelto = filmTrovati.get(scelta - 1);
+                    visualizzaProiezione(filmScelto);
+                } else {
+                    System.out.println("Numero non valido.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("numero non valido (hai inserito dei caratteri non numerici):");
             }
         }
     }
@@ -441,7 +446,7 @@ public class Proiezioni {
 
             try (PrintWriter printWriter = new PrintWriter(new FileWriter(percorsoFIle,  true))) {
 
-                String rigaCsv = String.format("%s,%s,%s,%s,%d,%d,%d,%.2f",
+                String rigaCsv = String.format(Locale.US,"\"%s\",\"%s\",\"%s\",\"%s\",%d,%d,%d,%.2f",
                         nuovaProiezione.getDataOra(),
                         nuovaProiezione.titolo,
                         nuovaProiezione.genere,
