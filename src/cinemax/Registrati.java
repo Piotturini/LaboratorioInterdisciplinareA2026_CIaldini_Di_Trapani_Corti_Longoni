@@ -48,7 +48,7 @@ public class Registrati extends Utenti{
      *     Se il file esiste già, i nuovi dati vengono aggiunti alla fine senza sovrascrivere
      *     quelli esistenti. La data di nascita viene formattata nel pattern dd/MM/yyyy
      * </p>
-     * @param filepath il percorso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     * @param filepath il percorso del file (data/Utenti.txt) dove salvare le informazioni
      */
     public void salvaSuFile(String filepath){
         try {
@@ -86,7 +86,7 @@ public class Registrati extends Utenti{
      *     </li>
      *     <li>Se il file non esiste, il metodo restituisce una lista vuota</li>
      * </ul>
-     * @param filepath il percorso del file (data/utenti_registrati.txt) dove salvare le informazioni
+     * @param filepath il percorso del file (data/Utenti.txt) dove salvare le informazioni
      * @return Un ArrayList contenente tutti gli oggetti Registrati validi trovati nel file
      */
     public static ArrayList<Registrati> caricaTutti (String filepath) {

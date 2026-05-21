@@ -17,8 +17,7 @@ public class CineMax {
         String fileCsv = "data/proiezioni.csv";
         List<Proiezioni> elenco = Proiezioni.caricaDaCSV(fileCsv);
 
-        String fileUtenti = "data/utenti_registrati.txt";
-        String fileBigliettai = "data/bigliettai.txt";
+        String fileUtenti = "data/Utenti.txt";
 
         //carichiamo le liste in memoria leggendo i file txt all'avvio
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
