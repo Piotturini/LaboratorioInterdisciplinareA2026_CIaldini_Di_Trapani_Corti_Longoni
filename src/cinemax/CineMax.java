@@ -22,8 +22,8 @@ public class CineMax {
         //carichiamo le liste in memoria leggendo i file txt all'avvio
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
 
-        System.out.println("BENVENUTO NEL NOSTRO CINEMAX");
-        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest): || 4 aggiungi || 5 modifica proiezione esistente");
+        System.out.println("BENVENUTO NEL NOSTRO SISTEMA CINEMAX");
+        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest): || 4 aggiungi || 5 modifica proiezione esistente || 6 elimina proiezione esistente");
 
         Scanner in = new Scanner(System.in);
         int scelta = in.nextInt();
@@ -132,6 +132,11 @@ public class CineMax {
 
             case 5:
                 Proiezioni.modificaProiezione(fileCsv);
+                elenco = Proiezioni.caricaDaCSV(fileCsv);
+                break;
+
+            case 6:
+                Proiezioni.eliminaProiezione(fileCsv);
                 elenco = Proiezioni.caricaDaCSV(fileCsv);
                 break;
 

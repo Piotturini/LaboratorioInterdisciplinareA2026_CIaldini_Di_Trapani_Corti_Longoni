@@ -9,7 +9,7 @@
      *     raggrupando le infomazioni anagrafiche e le credenziali di accesso comune
      * </p>
      * @author ...
-     * @version 1.0
+     * @version 1.0.1
      */
     public abstract class Utenti {
 

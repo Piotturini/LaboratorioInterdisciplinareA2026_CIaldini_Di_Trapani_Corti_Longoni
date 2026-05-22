@@ -17,7 +17,7 @@ import java.util.Scanner;
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
  * @author ...
- * @version 1.4.1
+ * @version 1.5.2
  */
 
 public class Proiezioni {
@@ -171,7 +171,7 @@ public class Proiezioni {
         List<Proiezioni> tutteLeProiezioni = caricaDaCSV(percorsoFile);
 
         if (tutteLeProiezioni.isEmpty()) {
-            System.out.println("Nessuna Proiezione disponibile");
+            System.out.println("Nessuna Proiezione presente nel sistema.");
             return;
         }
 
@@ -436,7 +436,7 @@ public class Proiezioni {
                 return;
             }
         }
-            if(sovrapposizione) {
+            if (sovrapposizione) {
                 System.out.println("Errore: L'orario inserito si sovrappone con un'altra proiezione già a palinsesto!");
                 return;
             }
@@ -467,6 +467,7 @@ public class Proiezioni {
     public static void modificaProiezione(String percorsoFile) {
         List<Proiezioni> elenco = caricaDaCSV(percorsoFile);
         if (elenco.isEmpty()) {
+            System.out.println("Nessuna proiezione presente nel sistema");
             return;
         }
 
@@ -530,7 +531,7 @@ public class Proiezioni {
             }
 
             System.out.println("Nuovo Prezzo (premi INVIO per non cambiarlo): ");
-            double nuovoPrezzo = in.nextDouble();
+            double nuovoPrezzo = Double.parseDouble(in.nextLine().replace(",", "."));
             if (nuovoPrezzo > 0) {
                 p.setPrezzo(nuovoPrezzo);
             }
@@ -546,7 +547,42 @@ public class Proiezioni {
             System.out.println("Proiezione completata con successo");
 
         } else {
-            System.out.println("Scelta non valida!");
+            System.out.println("Scelta non valida, operazione annullata");
+        }
+    }
+
+    public static void eliminaProiezione(String percorsoFile) {
+        List<Proiezioni> elenco = Proiezioni.caricaDaCSV(percorsoFile);
+
+        if (elenco.isEmpty()) {
+            System.out.println("Nessuna proiezione presente nel sistema");
+            return;
+        }
+
+        Scanner in = new Scanner(System.in);
+
+        // mostriamo l'elenco numerato per far scegliere all'utente la proiezione da eliminare
+        for (int i = 0; i < elenco.size(); i++) {
+            System.out.println((i + 1) + ". " + elenco.get(i).titolo);
+        }
+
+        System.out.println("Inserisci il numero della proiezione da eliminare");
+        int scelta = in.nextInt();
+        in.nextLine(); // pulizia buffer
+
+        if (scelta > 0 && scelta <= elenco.size()) {
+            Proiezioni daEliminare = elenco.get(scelta - 1);
+
+            // controllo se la proiezione non ha nessuna prenotazione
+            if (daEliminare.postiPrenotati > 0) {
+                System.out.println("Impossibile eliminare la proiezione: ci sono già " + daEliminare.postiPrenotati + " posti prenotati");
+            } else {
+                elenco.remove(scelta - 1);
+                salvasuCSV(percorsoFile, elenco);
+                System.out.println("Proiezione eliminata con successo");
+            }
+        } else {
+            System.out.println("Scelta non valida, operazione annullata");
         }
     }
 }
