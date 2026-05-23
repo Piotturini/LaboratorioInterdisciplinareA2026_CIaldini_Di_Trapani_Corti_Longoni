@@ -10,3 +10,5 @@ Giulia,Verdi,giuly_v,p@ssword1,05/11/1995,Napoli,Cliente
 Marco,Esposito,marcolino,psw_2026,30/06/1993,Bari,Cliente
 Chiara,Ricci,chiarotta,superpass99,22/10/2002,Genova,Cliente
 Sofia,Bruno,sofia_b,pass_sofia,14/12/2004,Lecco,Cliente
+Mario,Fumagalli,MarioFg,64,22/10/1998,Napoli,Cliente
+

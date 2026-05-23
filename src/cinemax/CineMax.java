@@ -42,9 +42,13 @@ public class CineMax {
                         System.out.println("Password: ");
                         String pass = in.nextLine();
 
+                        Utenti utenteTemp = new Registrati("","",user, pass, new Date(), "", "cliente");
+                        Password gestoreVerifica = new Password(utenteTemp);
+                        String passCifrataDigitata = String.valueOf(gestoreVerifica.hash());
+
                         boolean trovato = false;
                         for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user) && u.getPassword().equals(pass) && u.getRuolo().equalsIgnoreCase("Cliente")) {
+                            if (u.getUsername().equals(user) && u.getPassword().equals(passCifrataDigitata) && u.getRuolo().equalsIgnoreCase("Cliente")) {
                                 trovato = true;
                                 break;
                             }
@@ -120,6 +124,10 @@ public class CineMax {
                 //creiamo l'oggetto usando i dati inseriti
                 Registrati nuovo = new Registrati(nome, cognome, nuovoUser, nuovaPass, dataNascitaUtente, citta, "Cliente");
 
+                Password gestoreCifratura = new Password(nuovo);
+                int hashOttenuto = gestoreCifratura.hash();
+
+                nuovo.setPassword(String.valueOf(hashOttenuto));
                 //lo salviamo fisicamente nel file txt
                 nuovo.salvaSuFile(fileUtenti);
                 System.out.println("Registrazione completata con successo");
