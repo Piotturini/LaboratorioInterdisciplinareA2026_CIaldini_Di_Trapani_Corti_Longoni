@@ -65,14 +65,19 @@ public class CineMax {
                         System.out.println("Password: ");
                         String pass2 = in.nextLine();
 
+                        Utenti utenteTemp2 = new Registrati("","", user2, pass2, new Date(), "", "Bigliettaio");
+                        Password gestoreVerifica2 = new Password(utenteTemp2);
+                        String passCifrataDigitata2 = String.valueOf(gestoreVerifica2.hash());
+
                         boolean trovato2 = false;
                         for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user2) && u.getPassword().equals(pass2) && u.getRuolo().equalsIgnoreCase("Bigliettaio")) {
-                                trovato2 = true;
+                            if (u.getUsername().equals(user2) && u.getPassword().equals(passCifrataDigitata2) && u.getRuolo().equalsIgnoreCase("Bigliettaio")) {
+                                trovato = true;
                                 break;
                             }
                         }
-                        if (trovato2) System.out.println("Login Bigliettaio riuscito!");
+
+                        if (trovato2) System.out.println("Login bigliettaio riuscito!");
                         else System.out.println("Username o Password errati.");
                         break; //Termina il case 2
                     case 3:
@@ -82,10 +87,13 @@ public class CineMax {
                         System.out.println("Password: ");
                         String pass3 = in.nextLine();
 
+                        Utenti utenteTemp3 = new Registrati("","",user3, pass3, new Date(), "", "Proiezionista");
+                        Password gestoreVerifica3 = new Password(utenteTemp3);
+                        String passCifrataDigitata3 = String.valueOf(gestoreVerifica3.hash());
+
                         boolean trovato3 = false;
                         for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user3) && u.getPassword().equals(pass3) && u.getRuolo().equalsIgnoreCase("Proiezionista"))
-                            {
+                            if (u.getUsername().equals(user3) && u.getPassword().equals(passCifrataDigitata3) && u.getRuolo().equalsIgnoreCase("Proiezionista")) {
                                 trovato3 = true;
                                 break;
                             }
@@ -96,10 +104,10 @@ public class CineMax {
                         break; //Termina il case 3
                     default:
                         System.out.println("Scelta non valida");
-                    }
-                    break;
+                }
+                break;
 
-                case 2:
+            case 2:
                 //Registrazione utente
                 System.out.print("Nome "); String nome = in.nextLine();
                 System.out.print("Cognome "); String cognome = in.nextLine();
