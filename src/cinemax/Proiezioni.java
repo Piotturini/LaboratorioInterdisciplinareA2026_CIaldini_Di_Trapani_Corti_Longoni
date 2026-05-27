@@ -126,8 +126,13 @@ public class Proiezioni {
             bw.newLine();
 
             for (Proiezioni p : lista) {
+                // Puliamo i dati
                 String riga = String.format(Locale.US,"\"%s\",\"%s\",\"%s\",\"%s\",%d,%d,%d,%.2f",
-                        p.dataOra, p.titolo, p.genere,p.regista, p.anno, p.durata, p.etaMinima, p.prezzo);
+                        p.dataOra.replace("\"", ""),
+                        p.titolo.replace("\"", ""),
+                        p.genere.replace("\"", ""),
+                        p.regista.replace("\"", ""),
+                        p.anno, p.durata, p.etaMinima, p.prezzo);
                 bw.write(riga);
                 bw.newLine();
             }
@@ -513,26 +518,30 @@ public class Proiezioni {
             }
 
             System.out.println("Nuovo anno (premi INVIO per non cambiarlo): ");
-            int nuovoAnno = in.nextInt();
-            if (nuovoAnno > 0) {
+            String nuovoAnnostr = in.nextLine();
+            if (!nuovoAnnostr.isEmpty()) {
+                int nuovoAnno = Integer.parseInt(nuovoAnnostr.trim());
                 p.setAnno(nuovoAnno);
             }
 
             System.out.println("Nuova Durata (premi INVIO per non cambiarlo): ");
-            int nuovaDurata = in.nextInt();
-            if (nuovaDurata > 0) {
+            String nuovaDuratastr = in.nextLine();
+            if (!nuovaDuratastr.isEmpty()) {
+                int nuovaDurata = Integer.parseInt(nuovaDuratastr.trim());
                 p.setDurata(nuovaDurata);
             }
 
             System.out.println("Nuova età minima (premi INVIO per non cambiarlo): ");
-            int nuovaEtaMinima = in.nextInt();
-            if (nuovaEtaMinima >= 0) {
+            String nuovaEtaMinimastr = in.nextLine();
+            if (!nuovaEtaMinimastr.isEmpty()) {
+                int nuovaEtaMinima = Integer.parseInt(nuovaEtaMinimastr.trim());
                 p.setEtaMinima(nuovaEtaMinima);
             }
 
             System.out.println("Nuovo Prezzo (premi INVIO per non cambiarlo): ");
-            double nuovoPrezzo = Double.parseDouble(in.nextLine().replace(",", "."));
-            if (nuovoPrezzo > 0) {
+            String nuovoPrezzostr = in.nextLine();
+            if (!nuovoPrezzostr.isEmpty()) {
+                double nuovoPrezzo = Double.parseDouble(nuovoPrezzostr.trim().replace(",", "."));
                 p.setPrezzo(nuovoPrezzo);
             }
 
