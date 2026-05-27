@@ -17,13 +17,16 @@ public class CineMax {
         String fileCsv = "data/proiezioni.csv";
         List<Proiezioni> elenco = Proiezioni.caricaDaCSV(fileCsv);
 
+        String filePrenotazioni = "data/prenotazioni.txt";
+        java.util.Map<String, Prenotazione> mappaPrenotazioni = Prenotazione.caricaMappaPrenotazioni(filePrenotazioni, elenco);
+
         String fileUtenti = "data/Utenti.txt";
 
         //carichiamo le liste in memoria leggendo i file txt all'avvio
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
 
         System.out.println("BENVENUTO NEL NOSTRO SISTEMA CINEMAX");
-        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest): || 4 aggiungi || 5 modifica proiezione esistente || 6 elimina proiezione esistente");
+        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest): || 4 aggiungi || 5 modifica proiezione esistente || 6 elimina proiezione esistente || 7 crea una prenotazione");
 
         Scanner in = new Scanner(System.in);
         int scelta = in.nextInt();
@@ -155,6 +158,10 @@ public class CineMax {
                 Proiezioni.eliminaProiezione(fileCsv);
                 elenco = Proiezioni.caricaDaCSV(fileCsv);
                 break;
+            case 7:
+                Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
+                break;
+
 
             default:
                 System.out.println("Scelta non valida");
