@@ -14,7 +14,7 @@ import java.util.UUID;
  * La classe gestisce la generazione di codici univoci, il calcolo del costo totale
  * e la logica di validazione temporale delle modifiche
  * @author ...
- * @version 1.4
+ * @version 1.8.2
  */
 public class Prenotazione {
 
@@ -26,7 +26,6 @@ public class Prenotazione {
     private int numBiglietti;
 
     // COSTRUTTORI
-
     /**
      * Costruttore per creare una nuova prenotazione
      * Genere automaticamente un codice univoco tramite il metodo {@link #GeneraCodiceUnivoco()}
@@ -64,7 +63,7 @@ public class Prenotazione {
      * Genera un codice identificativo univoco
      * Utilizza {@link UUID} per garantire l'univocità e ne estrae i primi 8 caratteri
      * preceduti dal prefisso "PRN-"
-     * @return Il codice in formato double
+     * @return Il codice in formato String
      */
     private String GeneraCodiceUnivoco(){
         // Genera una stringa del tipo "PRN-3f8x9a2b-1234-4567..."
@@ -73,15 +72,6 @@ public class Prenotazione {
         String uuidCompleto = UUID.randomUUID().toString().replace("-","");
         //prendiamo i primi 8 caratteri
         return "PRN-" + uuidCompleto.substring(0,8).toUpperCase();
-    }
-
-    /**
-     * Calcola il costo totale delle prenotazioni
-     * Moltiplica il numero di biglietti e il prezzo unitario del film associato
-     * @return Il valore totale in formato double
-     */
-    public double getCostoTotale(){
-        return this.numBiglietti * this.film.getPrezzo();
     }
 
     /**
@@ -100,9 +90,14 @@ public class Prenotazione {
             return false;
         }
     }
-    // riscriviamo da zero il file contenente le prenotazioni partendo dalla mappa aggiornata
-// è fondamentale dopo ogni modifica
-    public static void sovrascriviFile(String percorsoFile, Map<String, Prenotazione> mappa, List<Proiezioni> elencoProiezioni){
+
+    /**
+     * Aggiorna integralmente il file delle prenotazioni
+     * @param percorsoFile Percorso file da sovrascrivere
+     * @param mappa Mappa contenente tutte le prenotazioni correnti
+     * @param elencoProiezioni Lista delle proiezioni
+     */
+    public static void sovrascriviFile(String percorsoFile, Map<String, Prenotazione> mappa, List<Proiezioni> elencoProiezioni) {
         try(java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(percorsoFile, false))) {
             for (Prenotazione p : mappa.values()) {
                 int idProiezione = elencoProiezioni.indexOf(p.getProiezione());
@@ -116,7 +111,7 @@ public class Prenotazione {
                 );
                 pw.println(riga);
             }
-        }catch(java.io.IOException e){
+        } catch (java.io.IOException e) {
             System.out.println("errore durante l'aggiornamento del file prenotazione" + e.getMessage());
         }
     }
@@ -162,12 +157,26 @@ public class Prenotazione {
     public int getNumBiglietti() {
         return numBiglietti;
     }
-    //creiamo un metodo per salvare su file le prenotazioni
+
+    /**
+     * Calcola il costo totale delle prenotazioni
+     * Moltiplica il numero di biglietti e il prezzo unitario del film associato
+     * @return Il valore totale in formato double
+     */
+    public double getCostoTotale(){
+        return this.numBiglietti * this.film.getPrezzo();
+    }
+
+    /**
+     * Salva la singola istanza della prenotazione corrente su file
+     * @param percorsoFile Percorso file da sovrascrivere
+     * @param elencoProiezioni Lista delle proiezioni
+     */
     public void salvaSufile(String percorsoFile, List<Proiezioni> elencoProiezioni){
         // troviamo la posizione (l'indice ) della proiezione corrente all'interno generale
         int idProizione = elencoProiezioni.indexOf(this.proiezione);
         // se per qualche motivo la proiezione non è nella lista impostiamo un valore di sicurezza a 0
-        if (idProizione == -1){
+        if (idProizione == -1) {
             idProizione = 0;
         }
         try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(percorsoFile, true))) {
@@ -179,13 +188,17 @@ public class Prenotazione {
                     this.numBiglietti
             );
             pw.println(rigaSalvataggio);
-        }catch(java.io.IOException e){
+        } catch (java.io.IOException e) {
             System.out.println("errore durante il salvataggio delle prenotazione" + e.getMessage());
         }
     }
 
-    // Legge l'intero file una volta sola all'avvio  e riempie una HashMap
-
+    /**
+     * Carica tutte le prenotazioni da file in una {@link HashMap} all'avvio del sistema
+     * @param percorsoFile Percorso file da sovrascrivere
+     * @param elencoProiezioni Lista delle proiezioni
+     * @return Una mappa con il codice della prenotazione come chiave
+     */
     public static Map<String, Prenotazione> caricaMappaPrenotazioni (String percorsoFile, List<Proiezioni> elencoProiezioni){
         Map<String, Prenotazione> mappa = new HashMap <>();
 
@@ -220,11 +233,20 @@ public class Prenotazione {
         }
         return mappa;
     }
-    public static void creaPrenotazione (java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv){
+
+    /**
+     * Procedura per la creazione di una nuova prenotazione
+     * @param in Scanner per l'input dell'utente
+     * @param filePrenotazioni Percorso del file prenotazioni
+     * @param elencoProiezioni Lista proiezioni corrente
+     * @param mappaPrenotazioni Mappa delle prenotazioni
+     * @param fileCsv Percorso del file CSV dei film
+     */
+    public static void creaPrenotazione (java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv) {
         Proiezioni.cercaProiezione(fileCsv);
         System.out.println("\nVuoi effettuare una prenotazione per uno di questi film? (si/no):");
         String risposta = in.nextLine().trim().toLowerCase();
-        if (!risposta.equals("si")){
+        if (!risposta.equals("si")) {
             System.out.println("operazione annullata ritorno al menu principale");
             return;
         }
@@ -235,7 +257,7 @@ public class Prenotazione {
         in.nextLine();
         int indiceLista = sceltaFilm -1;
 
-        if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()){
+        if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()) {
             Proiezioni proiezioneScelta = elencoProiezioni.get(indiceLista);
             if(quantita <=proiezioneScelta.getPostiLiberi()){
                 System.out.print("inserisci username del cliente: ");
@@ -252,33 +274,50 @@ public class Prenotazione {
                 mappaPrenotazioni.put(nuovaP.getCodice().toUpperCase(), nuovaP);
 
                 System.out.println("prenotazione creata! codice: " + nuovaP.getCodice() );
-            }else {
+            } else {
                 System.out.println("posti insufficenti.");
             }
-        }else {
+        } else {
             System.out.println("scelta film non valida.");
         }
     }
+
+    /**
+     * Procedura per la ricerca e visualizzazione dei dettagli di una prenotazione
+     * @param in Scanner per l'input dell'utente
+     * @param filePrenotazioni Percorso del file prenotazioni
+     * @param elencoProiezioni Lista proiezioni corrente
+     * @param mappaPrenotazioni Mappa delle prenotazioni
+     * @param fileCsv Percorso del file CSV dei film
+     */
     public static void CercaPrenotazione (java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv){
-        System.out.println("verifica Biglietto");
-        System.out.println("inserisci il codice univoco della prenotazione: ");
+        System.out.println("Verifica Biglietto");
+        System.out.println("Inserisci il codice univoco della prenotazione: ");
         String codiceCerca = in.nextLine().toUpperCase().trim();
-         if (mappaPrenotazioni.containsKey(codiceCerca)){
+         if (mappaPrenotazioni.containsKey(codiceCerca)) {
              Prenotazione trovata = mappaPrenotazioni.get(codiceCerca);
-        System.out.println("Biglietto valido" );
-        System.out.println("Intenstatario:"+ trovata.getUsernamenCliente());
-        System.out.println("Film "+  trovata.getFilm().getTitolo());
-        System.out.println("Orario"+ trovata.getProiezione().getDataOra());
-        System.out.println("Posti:"+ trovata.getNumBiglietti());
-        System.out.println("Totale; "+ trovata.getCostoTotale());
-    }else{
+             System.out.println("Biglietto valido" );
+             System.out.println("Intenstatario:"+ trovata.getUsernamenCliente());
+             System.out.println("Film "+  trovata.getFilm().getTitolo());
+             System.out.println("Orario"+ trovata.getProiezione().getDataOra());
+             System.out.println("Posti:"+ trovata.getNumBiglietti());
+             System.out.println("Totale; "+ trovata.getCostoTotale());
+        } else {
         System.out.println("nessuna prenotazione trovate");
+        }
     }
 
-    }
-
-    public static void modificaPrenotazione(java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv){
-        System.out.println("inizio modfica prenotazione");
+    /**
+     * Procedura per la modifica di una prenotazione esistente
+     * Permette di cambiare film/orario o il numero di biglietti
+     * @param in Scanner per l'input dell'utente
+     * @param filePrenotazioni Percorso del file prenotazioni
+     * @param elencoProiezioni Lista proiezioni corrente
+     * @param mappaPrenotazioni Mappa delle prenotazioni
+     * @param fileCsv Percorso del file CSV dei film
+     */
+    public static void modificaPrenotazione(java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv) {
+        System.out.println("Inizio modfica prenotazione");
         System.out.println("Inserisci il codice del biglietto da variare;");
         String codice = in.nextLine().toUpperCase().trim();
         if (!mappaPrenotazioni.containsKey(codice)){
@@ -291,31 +330,30 @@ public class Prenotazione {
         System.out.println("Data/Ora attuale " + p.getProiezione().getDataOra());
         System.out.println("Posti attuali: " + p.getNumBiglietti());
 
-        if(!p.IsModificabile()){
+        if (!p.IsModificabile()) {
             System.out.println("inpossibile modificare spettacolo gia iniziato");
             return;
         }
 
         // scelta CAMBIO FILM/DATA
-
         Proiezioni nuovaProiezione = p.getProiezione();
         System.out.print("\nVuoi cambiare film o data? (premi INVIO per non cambiarlo, scrivi 'si' per cambiarlo): ");
         String sceltaCambioSpettacolo = in.nextLine().trim().toLowerCase();
 
-        if(!sceltaCambioSpettacolo.isEmpty() && sceltaCambioSpettacolo.equals("si")){
+        if (!sceltaCambioSpettacolo.isEmpty() && sceltaCambioSpettacolo.equals("si")) {
             Proiezioni.cercaProiezione(fileCsv);
             System.out.print("\ninserisci il numero progressivo del nuovo spettacolo: (1 per il primo, 2 per il secondo...");
             String inpuId = in.nextLine().trim();
 
-            if(!inpuId.isEmpty()){
-                try{
+            if (!inpuId.isEmpty()) {
+                try {
                     int indiceLista = Integer.parseInt(inpuId) - 1;
-                    if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()){
+                    if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()) {
                         nuovaProiezione = elencoProiezioni.get(indiceLista);
                     } else {
                         System.out.println("Selezione fuori intervallo. modifica non effetutata");
                 }
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                     System.out.println("input non valido. modifica non effettuata");
                 }
         }
@@ -323,28 +361,28 @@ public class Prenotazione {
         int nuoviPosti = p.getNumBiglietti();
         System.out.println("inserire il nuovo numero totale di biglietti (premi invio oer non cambiarli");
         String inputPosti = in.nextLine().trim();
-        if(!inputPosti.isEmpty()){
-            try{
+        if (!inputPosti.isEmpty()) {
+            try {
                 nuoviPosti = Integer.parseInt(inputPosti);
-                if(nuoviPosti <= 0) {
+                if (nuoviPosti <= 0) {
                     System.out.println("Quantità non valida. Mantenuti i posti precedenti.");
                     nuoviPosti = p.getNumBiglietti();
                 }
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     System.out.println("input non numerico. mantenuti i posti precedenti");
                 }
             }
             int postiDisponibili;
-        if (nuovaProiezione == p.getProiezione()){
+        if (nuovaProiezione == p.getProiezione()) {
             postiDisponibili = nuovaProiezione.getPostiLiberi() + p.getNumBiglietti();
-        }else {
+        } else {
             postiDisponibili = nuovaProiezione.getPostiLiberi();
         }
-        if (nuoviPosti > postiDisponibili ){
+        if (nuoviPosti > postiDisponibili ) {
             System.out.println("impossibile salvare le modifiche posti insufficenti");
             return;
         }
-        if (nuovaProiezione != p.getProiezione()){
+        if (nuovaProiezione != p.getProiezione()) {
             p.proiezione = nuovaProiezione;
             p.film = new Film(
                     nuovaProiezione.getTitolo(), nuovaProiezione.getGenere(),
@@ -361,6 +399,4 @@ public class Prenotazione {
         System.out.println("Posti occupati" + p.getNumBiglietti());
         System.out.println("Nuova spesa " + p.getCostoTotale() +"€");
         }
-
-
 }

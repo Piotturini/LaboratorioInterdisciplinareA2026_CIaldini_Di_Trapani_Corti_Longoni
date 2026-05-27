@@ -16,8 +16,8 @@ import java.util.Scanner;
 
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
- * @author ...
- * @version 1.5.2
+ * @author Matteo Corti
+ * @version 1.8.4
  */
 
 public class Proiezioni {
@@ -119,14 +119,22 @@ public class Proiezioni {
         return listaP;
     }
 
-    // Sovrascrive il file CSV con i dati presenti nella lista
+    /**
+     * Sovrascrive il file CSV con i dati correnti presenti nella lista
+     * <p>
+     *     Prima del salvataggio il metodo pulisce i campi stringa da eventuali virgolette
+     *     per evitare la corruzione del file CSV
+     * </p>
+     * @param percorsoFile Percorso del file CSV
+     * @param lista Lista delle proiezioni
+     */
     public static void salvasuCSV(String percorsoFile, List<Proiezioni> lista) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(percorsoFile))) {
             bw.write("dataOra,titolo,genere,regista,anno,durata,etaMinima,prezzo");
             bw.newLine();
 
             for (Proiezioni p : lista) {
-                // Puliamo i dati
+                // Pulizia dati
                 String riga = String.format(Locale.US,"\"%s\",\"%s\",\"%s\",\"%s\",%d,%d,%d,%.2f",
                         p.dataOra.replace("\"", ""),
                         p.titolo.replace("\"", ""),
@@ -275,6 +283,8 @@ public class Proiezioni {
         }
     }
 
+    // METODI GETTER
+
     /**
      * Restituisce la Data e l'ora della proiezione
      * @return Una stringa contenente la data e l'ora
@@ -319,6 +329,8 @@ public class Proiezioni {
     public double getPrezzo() {
         return prezzo;
     }
+
+    // METODI SETTER
 
     public void setDataOra(String dataOra) {
         this.dataOra = dataOra;
@@ -383,6 +395,17 @@ public class Proiezioni {
         }
     }
 
+    /**
+     * Gestisce l'aggiunta di una proiezione al sistema
+     * <p>
+     *     Esegue una validazione temporale per impedire la sovrapposizione con proiezioni già esistenti
+     *     nella stessa sala, calcolando il tempo di fine basandosi sulla durata
+     *     In caso di successo, i dati vengono scritti nel file CSV
+     * </p>
+     * @param in Scanner per l'input dei dati
+     * @param percorsoFIle Percorso del file CSV
+     * @param elenco Lista delle proiezioni correnti per controllare se ci sono conflitti
+     */
     public static void aggiungiProiezione(Scanner in, String percorsoFIle, List<Proiezioni> elenco){
         System.out.println("INSERISCI UNA NUOVA PROIEZIONE");
 
@@ -469,6 +492,14 @@ public class Proiezioni {
             }
         }
 
+    /**
+     * Consente la modifica di una proiezione già presente nel file CSV
+     * <p>
+     *     La modifica è permessa solo se non sono presenti prenotazioni per la relativa proiezione
+     *     Premere INVIO senza digitare nulla permette di mantenere il dato di partenza, quindi non avrà a modificarsi
+     * </p>
+      * @param percorsoFile Percorso del file CSV da aggiornare
+     */
     public static void modificaProiezione(String percorsoFile) {
         List<Proiezioni> elenco = caricaDaCSV(percorsoFile);
         if (elenco.isEmpty()) {
@@ -560,6 +591,14 @@ public class Proiezioni {
         }
     }
 
+    /**
+     * Elimina definitivamente un proiezione presente nel file CSV
+     * <p>
+     *     Se la proieziona da eliminare ha già dei posti prenotati
+     *     non sarà possibile eliminarla
+     * </p>
+     * @param percorsoFile Percorso del file CSV da cui rimuovere una proiezione
+     */
     public static void eliminaProiezione(String percorsoFile) {
         List<Proiezioni> elenco = Proiezioni.caricaDaCSV(percorsoFile);
 

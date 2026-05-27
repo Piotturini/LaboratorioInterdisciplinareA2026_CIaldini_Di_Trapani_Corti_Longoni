@@ -3,13 +3,13 @@
     import java.util.Date;
 
     /**
-     * Classe base che rappresenta un utente generico all'interno del sistema Cinemax
+     * Classe astratta base che rappresenta un utente generico all'interno del sistema Cinemax
      * <p>
      *     Questa classe funge da superclasse per tutte le tipologie di Utenti (Bigliettai, Proiezionisti, Clienti registrati e Clienti non registrati
      *     raggrupando le infomazioni anagrafiche e le credenziali di accesso comune
      * </p>
      * @author ...
-     * @version 1.0.1
+     * @version 1.0.2
      */
     public abstract class Utenti {
 
