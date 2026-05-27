@@ -100,14 +100,18 @@ public class Prenotazione {
     public static void sovrascriviFile(String percorsoFile, Map<String, Prenotazione> mappa, List<Proiezioni> elencoProiezioni) {
         try(java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(percorsoFile, false))) {
             for (Prenotazione p : mappa.values()) {
-                int idProiezione = elencoProiezioni.indexOf(p.getProiezione());
-                if (idProiezione == -1) idProiezione = 0;
+                String nomeFilm = p.getFilm().getTitolo().replace("\"", "").trim();
+                String regista = p.getFilm().getRegista().replace("\"", "").trim();
+                String dataFilm = p.getProiezione().getDataOra().replace("\"", "").trim();
 
-                String riga = String.format("%s;%s;%d;%d",
+                String riga = String.format(java.util.Locale.US, "%s;%s;%s;%s;%s;%d;%.2f",
                         p.getCodice(),
                         p.getUsernamenCliente(),
-                        idProiezione,
-                        p.getNumBiglietti()
+                        nomeFilm,
+                        regista,
+                        dataFilm,
+                        p.getNumBiglietti(),
+                        p.getCostoTotale()
                 );
                 pw.println(riga);
             }
@@ -173,19 +177,21 @@ public class Prenotazione {
      * @param elencoProiezioni Lista delle proiezioni
      */
     public void salvaSufile(String percorsoFile, List<Proiezioni> elencoProiezioni){
-        // troviamo la posizione (l'indice ) della proiezione corrente all'interno generale
-        int idProizione = elencoProiezioni.indexOf(this.proiezione);
-        // se per qualche motivo la proiezione non è nella lista impostiamo un valore di sicurezza a 0
-        if (idProizione == -1) {
-            idProizione = 0;
-        }
         try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(percorsoFile, true))) {
-            // costruiamo la stringa formattata
-            String rigaSalvataggio = String.format("%s;%s;%d;%d",
+            // Puliamo i testi dalle virgolette per sicurezza
+            String nomeFilm = this.film.getTitolo().replace("\"", "").trim();
+            String regista = this.film.getRegista().replace("\"", "").trim();
+            String dataFilm = this.proiezione.getDataOra().replace("\"", "").trim();
+
+            // Scrittura in chiaro: CODICE;ACQUIRENTE;FILM;REGISTA;DATA;BIGLIETTI;PREZZO
+            String rigaSalvataggio = String.format(java.util.Locale.US, "%s;%s;%s;%s;%s;%d;%.2f",
                     this.codice,
                     this.usernamenCliente,
-                    idProizione,
-                    this.numBiglietti
+                    nomeFilm,
+                    regista,
+                    dataFilm,
+                    this.numBiglietti,
+                    this.getCostoTotale()
             );
             pw.println(rigaSalvataggio);
         } catch (java.io.IOException e) {
@@ -204,32 +210,51 @@ public class Prenotazione {
 
         try(BufferedReader br = new BufferedReader(new FileReader(percorsoFile))) {
             String riga;
+            // 🟢 Unico readLine() corretto nel ciclo while
             while ((riga = br.readLine()) != null) {
-                // Ipotizziamo che la riga sia divisa da punti e virgola: CODICE;USERNAME;ID_PROIEZIONE;NUM_BIGLIETTI
-                if ((riga = br.readLine()) !=null);
+                if (riga.trim().isEmpty()) continue;
+
                 String[] dati = riga.split(";");
                 String codice = dati[0].trim();
                 String username = dati[1].trim();
-                int idProiezione = Integer.parseInt(dati[2].trim());
-                int numBiglietti = Integer.parseInt(dati[3].trim());
-                // Recuperiamo gli oggetti associati ( Film e proiezione) dalla lista  generale
-                Proiezioni proiezione = elencoProiezioni.get(idProiezione);
-                Film filmAssociato = new Film(
-                        proiezione.getTitolo(),
-                        proiezione.getGenere(),
-                        proiezione.getRegista(),
-                        proiezione.getAnno(),
-                        proiezione.getDurata(),
-                        proiezione.getEtaMinima(),
-                        proiezione.getPrezzo()
-                ) ;
-                // Ricostruiamo l'oggetto usando il secondo costruttore (quello con il codice)
-                Prenotazione p = new Prenotazione(codice, username, proiezione, filmAssociato, numBiglietti);
-                //lo inseriamo come chiave della has map
+                String titoloFilm = dati[2].trim().replace("\"", "");
+                String registaFilm = dati[3].trim().replace("\"", "");
+                String dataOraFilm = dati[4].trim().replace("\"", "");
+                int numBiglietti = Integer.parseInt(dati[5].trim());
+                // Il prezzo totale (dati[6]) lo ricalcoliamo dinamicamente dal Film per sicurezza
+
+                // Cerchiamo la proiezione corrispondente confrontando il titolo e la data in chiaro
+                Proiezioni proiezioneAbbinata = null;
+                for (Proiezioni pr : elencoProiezioni) {
+                    String titoloPr = pr.getTitolo().replace("\"", "").trim();
+                    String dataPr = pr.getDataOra().replace("\"", "").trim();
+
+                    if (titoloPr.equalsIgnoreCase(titoloFilm) && dataPr.equals(dataOraFilm)) {
+                        proiezioneAbbinata = pr;
+                        break;
+                    }
+                }
+
+                // Se troviamo la proiezione usiamo i suoi dati reali, altrimenti usiamo un fallback storico
+                Film filmAssociato;
+                if (proiezioneAbbinata != null) {
+                    filmAssociato = new Film(
+                            proiezioneAbbinata.getTitolo(), proiezioneAbbinata.getGenere(),
+                            proiezioneAbbinata.getRegista(), proiezioneAbbinata.getAnno(),
+                            proiezioneAbbinata.getDurata(), proiezioneAbbinata.getEtaMinima(),
+                            proiezioneAbbinata.getPrezzo()
+                    );
+                } else {
+                    // Fallback di sicurezza se la proiezione è passata e non è più nella lista RAM
+                    filmAssociato = new Film(titoloFilm, "Generico", registaFilm, 2026, 120, 0, 8.50);
+                    proiezioneAbbinata = new Proiezioni(dataOraFilm, titoloFilm, "Generico", registaFilm, 2026, 120, 100, 8.50);
+                }
+
+                Prenotazione p = new Prenotazione(codice, username, proiezioneAbbinata, filmAssociato, numBiglietti);
                 mappa.put(codice.toUpperCase(), p);
             }
         } catch (Exception e) {
-            System.out.println("archivio prenotazioni vuoto o non ancora creato ");
+            System.out.println("archivio prenotazioni vuoto o non ancora creato");
         }
         return mappa;
     }
