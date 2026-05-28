@@ -210,7 +210,6 @@ public class Prenotazione {
 
         try(BufferedReader br = new BufferedReader(new FileReader(percorsoFile))) {
             String riga;
-            // 🟢 Unico readLine() corretto nel ciclo while
             while ((riga = br.readLine()) != null) {
                 if (riga.trim().isEmpty()) continue;
 
@@ -221,9 +220,6 @@ public class Prenotazione {
                 String registaFilm = dati[3].trim().replace("\"", "");
                 String dataOraFilm = dati[4].trim().replace("\"", "");
                 int numBiglietti = Integer.parseInt(dati[5].trim());
-                // Il prezzo totale (dati[6]) lo ricalcoliamo dinamicamente dal Film per sicurezza
-
-                // Cerchiamo la proiezione corrispondente confrontando il titolo e la data in chiaro
                 Proiezioni proiezioneAbbinata = null;
                 for (Proiezioni pr : elencoProiezioni) {
                     String titoloPr = pr.getTitolo().replace("\"", "").trim();
