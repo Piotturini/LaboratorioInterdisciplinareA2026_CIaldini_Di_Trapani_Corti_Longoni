@@ -271,15 +271,31 @@ public class Prenotazione {
             System.out.println("operazione annullata ritorno al menu principale");
             return;
         }
-        System.out.print("inserisci L'id progressivo del film scelto (1 per il primo,2 per il secondo...");
-        int sceltaFilm = in.nextInt();
+        System.out.print("Conferma il titolo  del film visto a schermo: ");
+        String titoloScelto = in.nextLine().trim();
+        System.out.print("Conferma l'orario la data dello spettacolo: ");
+        String dataScelta = in.nextLine().trim();
+
+        Proiezioni proiezioneScelta = null;
+        for (Proiezioni pr: elencoProiezioni){
+            String titoloPr = pr.getTitolo().replace("\"", "").trim();
+            String dataPr = pr.getDataOra().replace("\"", "").trim();
+
+            if (titoloPr.equalsIgnoreCase(titoloScelto) && dataPr.contains(dataScelta)){
+                proiezioneScelta = pr;
+                break;
+            }
+        }
+        if (proiezioneScelta == null) {
+            System.out.println("Scelta non valida. Nessun film corrispondente trovato nel palinsesto.");
+            return;
+        }
+
+
         System.out.print("quanti biglietti desideri acquistare? ");
         int quantita = in.nextInt();
         in.nextLine();
-        int indiceLista = sceltaFilm -1;
 
-        if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()) {
-            Proiezioni proiezioneScelta = elencoProiezioni.get(indiceLista);
             if(quantita <=proiezioneScelta.getPostiLiberi()){
                 System.out.print("inserisci username del cliente: ");
                 String utenteAcquirente = in.nextLine();
@@ -298,9 +314,6 @@ public class Prenotazione {
             } else {
                 System.out.println("posti insufficenti.");
             }
-        } else {
-            System.out.println("scelta film non valida.");
-        }
     }
 
     /**
