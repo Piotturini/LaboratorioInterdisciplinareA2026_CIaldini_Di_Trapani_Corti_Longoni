@@ -288,7 +288,6 @@ public class Prenotazione {
             System.out.println("Scelta non valida. Nessun film corrispondente trovato nel palinsesto.");
             return;
         }
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         try {
             String dataPulita = proiezioneScelta.getDataOra().replace("\"", "").trim();
