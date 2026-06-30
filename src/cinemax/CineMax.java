@@ -1,10 +1,7 @@
 package cinemax;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Classe principale del progetto Cinemax
@@ -24,148 +21,261 @@ public class CineMax {
 
         //carichiamo le liste in memoria leggendo i file txt all'avvio
         ArrayList<Registrati> listaUtenti = Registrati.caricaTutti(fileUtenti);
-
-        System.out.println("BENVENUTO NEL NOSTRO SISTEMA CINEMAX");
-        System.out.println("Scegli un'opzione (1: login  || 2: registrati come nuovo utente || 3: accedi come guest): || 4 aggiungi || 5 modifica proiezione esistente || 6 elimina proiezione esistente || 7 crea una prenotazione");
-
         Scanner in = new Scanner(System.in);
-        int scelta = in.nextInt();
-        in.nextLine(); //pulizia del buffer obbligatoria dopo  un nextInt()
+        boolean ciclo = true;
+        while (ciclo){
+            System.out.println("BENVENUTO NEL NOSTRO SISTEMA CINEMAX");
+            System.out.println("1. Login");
+            System.out.println("2. Registrati come nuovo cliente");
+            System.out.println("3. Accedi come guest (Utente non registrato)");
+            System.out.println("0: Chiudo l'applicazione");
+            System.out.print("Scegli un'opzione: ");
 
-        switch (scelta) {
-            case 1:
-                //LOGIN UTENTE
-                System.out.println("Come vorresti accedere? (1: Utente || 2: bigliettaio || 3: proiezionista): ");
-                int scelta2 = in.nextInt();
-                in.nextLine();
-                switch (scelta2) {
-                    case 1:
-                        System.out.println("Username: ");
-                        String user = in.nextLine();
-                        System.out.println("Password: ");
-                        String pass = in.nextLine();
+            int scelta = in.nextInt();
+            in.nextLine(); //pulizia del buffer obbligatoria dopo  un nextInt()
 
-                        Utenti utenteTemp = new Registrati("","",user, pass, new Date(), "", "cliente");
-                        Password gestoreVerifica = new Password(utenteTemp);
-                        String passCifrataDigitata = String.valueOf(gestoreVerifica.hash());
+            switch (scelta) {
+                case 1:
+                    //LOGIN UTENTE
+                    System.out.println("\nLOGIN");
+                    System.out.println("1. Cliente");
+                    System.out.println("2. Bigliettaio");
+                    System.out.println("3. Proiezionista");
+                    System.out.print("Seleziona il ruolo con cui vorresti accedere: ");
+                    int ruoloScelto = in.nextInt();
+                    in.nextLine();
 
-                        boolean trovato = false;
-                        for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user) && u.getPassword().equals(passCifrataDigitata) && u.getRuolo().equalsIgnoreCase("Cliente")) {
-                                trovato = true;
-                                break;
-                            }
+                    String ruoloString = "";
+
+                    switch (ruoloScelto) {
+                        case 1:
+                            ruoloString = "Cliente";
+                            break;
+                        case 2:
+                            ruoloString = "Bigliettaio";
+                            break;
+                        case 3:
+                            ruoloString = "Proiezionista";
+                            break;
+                        default:
+                            ruoloString = "Sconosciuto";
+                            break;
+                    }
+
+                    if (ruoloString.equals("Sconosciuto")) {
+                        System.out.println("Ruolo non valido");
+                        break;
+                    }
+
+                    System.out.print("Username: ");
+                    String user = in.nextLine();
+                    System.out.print("Password: ");
+                    String pass = in.nextLine();
+
+                    Utenti utenteTemp = new Registrati("","",user, pass, new Date(), "", "cliente");
+                    Password gestoreVerifica = new Password(utenteTemp);
+                    String passCifrataDigitata = String.valueOf(gestoreVerifica.hash());
+
+                    Registrati utenteAutenticato = null;
+                    for (Registrati u : listaUtenti) {
+                        if (u.getUsername().equals(user) && u.getPassword().equals(passCifrataDigitata) && u.getRuolo().equalsIgnoreCase(ruoloString)) {
+                            utenteAutenticato = u;
+                            break;
                         }
+                    }
 
-                        if (trovato) System.out.println("Login Utente riuscito!");
-                        else System.out.println("Username o Password errati.");
-                        break; //Termina il case 1
+                    if (utenteAutenticato != null) {
+                        System.out.println("Login Utente riuscito! Benvenuto, " + utenteAutenticato.getUsername());
 
-                    case 2:
-
-                        System.out.println("Username: ");
-                        String user2 = in.nextLine();
-                        System.out.println("Password: ");
-                        String pass2 = in.nextLine();
-
-                        Utenti utenteTemp2 = new Registrati("","", user2, pass2, new Date(), "", "Bigliettaio");
-                        Password gestoreVerifica2 = new Password(utenteTemp2);
-                        String passCifrataDigitata2 = String.valueOf(gestoreVerifica2.hash());
-
-                        boolean trovato2 = false;
-                        for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user2) && u.getPassword().equals(passCifrataDigitata2) && u.getRuolo().equalsIgnoreCase("Bigliettaio")) {
-                                trovato = true;
+                        switch (utenteAutenticato.getRuolo().toLowerCase()) {
+                            case "cliente":
+                                menuClienteRegistrato(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
                                 break;
-                            }
-                        }
-
-                        if (trovato2) System.out.println("Login bigliettaio riuscito!");
-                        else System.out.println("Username o Password errati.");
-                        break; //Termina il case 2
-                    case 3:
-
-                        System.out.println("Username: ");
-                        String user3 = in.nextLine();
-                        System.out.println("Password: ");
-                        String pass3 = in.nextLine();
-
-                        Utenti utenteTemp3 = new Registrati("","",user3, pass3, new Date(), "", "Proiezionista");
-                        Password gestoreVerifica3 = new Password(utenteTemp3);
-                        String passCifrataDigitata3 = String.valueOf(gestoreVerifica3.hash());
-
-                        boolean trovato3 = false;
-                        for (Registrati u : listaUtenti) {
-                            if (u.getUsername().equals(user3) && u.getPassword().equals(passCifrataDigitata3) && u.getRuolo().equalsIgnoreCase("Proiezionista")) {
-                                trovato3 = true;
+                            case "bigliettaio":
+                                menuBigliettaio(in, filePrenotazioni, elenco, mappaPrenotazioni);
                                 break;
-                            }
+                            case "proiezionista":
+                                menuProiezionista(in, fileCsv, elenco);
+                                break;
+                            default:
+                                System.out.println("Errore nel caricamente del menu profilo. ");
+                                break;
                         }
+                    } else {
+                        System.out.println("Username o Password errati ");
+                    }
 
-                        if (trovato3) System.out.println("Login Proiezionista riuscito!");
-                        else System.out.println("Username o Password errati.");
-                        break; //Termina il case 3
-                    default:
-                        System.out.println("Scelta non valida");
-                }
-                break;
+                    break; //Termina il case 1
+                case 2:
+                    //Registrazione utente
+                    System.out.print("Nome "); String nome = in.nextLine();
+                    System.out.print("Cognome "); String cognome = in.nextLine();
+                    System.out.print("Scegli Username: "); String nuovoUser = in.nextLine();
+                    System.out.print("Scegli Password: "); String nuovaPass = in.nextLine();
 
-            case 2:
-                //Registrazione utente
-                System.out.print("Nome "); String nome = in.nextLine();
-                System.out.print("Cognome "); String cognome = in.nextLine();
-                System.out.print("Scegli Username: "); String nuovoUser = in.nextLine();
-                System.out.print("Scegli Password: "); String nuovaPass = in.nextLine();
+                    //chiediamo la data di nascita all'utente in formato testo
+                    System.out.print("Data di nascita (gg/mm/aaaa): ");
+                    String dataInput = in.nextLine();
+                    System.out.print("Città di domicilio:  "); String citta = in.nextLine();
 
-                //chiediamo la data di nascita all'utente in formato testo
-                System.out.print("Data di nascita (gg/mm/aaaa): ");
-                String dataInput = in.nextLine();
-                System.out.print("Città di domicilio:  "); String citta = in.nextLine();
+                    //Convertiamo il testo inserito dall'utente in un vero oggetto Date
+                    Date dataNascitaUtente;
+                    try{
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        dataNascitaUtente = sdf.parse(dataInput);
+                    } catch (Exception e) {
+                        System.out.println("Formato data non valido. Verrà impostata la data odierna");
+                        dataNascitaUtente = new Date();
+                    }
 
-                //Convertiamo il testo inserito dall'utente in un vero oggetto Date
-                Date dataNascitaUtente;
-                try{
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    dataNascitaUtente = sdf.parse(dataInput);
-                } catch (Exception e) {
-                    System.out.println("Formato data non valido. Verrà impostata la data odierna");
-                    dataNascitaUtente = new Date();
-                }
+                    //creiamo l'oggetto usando i dati inseriti
+                    Registrati nuovo = new Registrati(nome, cognome, nuovoUser, nuovaPass, dataNascitaUtente, citta, "Cliente");
+                    Password gestoreCifratura = new Password(nuovo);
 
-                //creiamo l'oggetto usando i dati inseriti
-                Registrati nuovo = new Registrati(nome, cognome, nuovoUser, nuovaPass, dataNascitaUtente, citta, "Cliente");
-
-                Password gestoreCifratura = new Password(nuovo);
-                int hashOttenuto = gestoreCifratura.hash();
-
-                nuovo.setPassword(String.valueOf(hashOttenuto));
-                //lo salviamo fisicamente nel file txt
-                nuovo.salvaSuFile(fileUtenti);
-                System.out.println("Registrazione completata con successo");
-                break; //Termina il case 2
-            case 3:
-
-            case 4:
-                Proiezioni.aggiungiProiezione(in, fileCsv, elenco);
-                break;
-
-            case 5:
-                Proiezioni.modificaProiezione(fileCsv);
-                elenco = Proiezioni.caricaDaCSV(fileCsv);
-                break;
-
-            case 6:
-                Proiezioni.eliminaProiezione(fileCsv);
-                elenco = Proiezioni.caricaDaCSV(fileCsv);
-                break;
-            case 7:
-                Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
-                break;
-
-
-            default:
-                System.out.println("Scelta non valida");
+                    nuovo.setPassword(String.valueOf(gestoreCifratura.hash()));
+                    //lo salviamo fisicamente nel file txt
+                    nuovo.salvaSuFile(fileUtenti);
+                    listaUtenti.add(nuovo);
+                    System.out.println("Registrazione completata con successo");
+                    break;
+                case 3:
+                    menuGuest(in);
+                    break;
+                case 0:
+                    System.out.println("Grazie per aver usato Cinemax! ");
+                    ciclo = false;
+                    break;
+                default:
+                    System.out.println("Scelta non valida");
+            }
         }
         in.close();
     }
+
+    //Sottomenu
+
+    private static void menuGuest(Scanner in){
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\nMenu guest");
+            System.out.println("1. cercare proiezioni");
+            System.out.println("2. visualizzare i dettagli delle proiezioni");
+            System.out.println("3. registrati all'applicazione come cliente");
+            System.out.println("4. Torna al menu principale (Esci) ");
+            System.out.println("Scegli un'opzione: ");
+            int scelta = in.nextInt();
+            in.nextLine();
+
+            switch (scelta) {
+                case 1:
+                    System.out.println("Ricerca proiezioni... ");
+                    break;
+                case 2:
+                    System.out.println("visualizzazione dettagli proiezioni...");
+                    break;
+                case 3:
+                    System.out.println("Uscire dal menu guest e selezionare l'opzione 2 del menu principale per registrarsi. ");
+                    inMenu = false;
+                    break;
+                case 4:
+                    System.out.println("Logout effettuato.");
+                    inMenu = false;
+                    break;
+                default:
+                    System.out.println("Scelta non valida");
+            }
+        }
+    }
+
+    private static void menuClienteRegistrato(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni, String fileCsv){
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\nMenu cliente registrato");
+            System.out.println("1. inserire una prenotazione");
+            System.out.println("2. visualizzare le proprie prenotazioni");
+            System.out.println("3. modificare e cancellare le proprie prenotazioni");
+            System.out.println("4. Logout");
+            System.out.println("Scegli un'opzione: ");
+            int scelta = in.nextInt();
+            in.nextLine();
+
+            switch (scelta) {
+                case 1:
+                    Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
+                    break;
+                case 2:
+                    System.out.println("Visualizzazione delle tue prenotazioni... ");
+                break;
+                case 3:
+                    System.out.println("Modifica/cancellazione prenotazioni...");
+                case 4:
+                    System.out.println("Logout effettuato.");
+                    inMenu = false;
+                    break;
+                default:
+                    System.out.println("Scelta non valida");
+            }
+        }
+    }
+
+    private static void menuProiezionista(Scanner in, String fileCsv, List<Proiezioni> elenco) {
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\nMenu proiezionista");
+            System.out.println("1. inserire un film e i dettagli della proiezione");
+            System.out.println("2. modificare una proiezione");
+            System.out.println("3. eliminare una proiezione");
+            System.out.println("4. Logout");
+            System.out.println("Scegli un'opzione: ");
+            int scelta = in.nextInt();
+            in.nextLine();
+
+            switch (scelta) {
+                case 1:
+                    Proiezioni.aggiungiProiezione(in, fileCsv, elenco);
+                    break;
+                case 2:
+                    Proiezioni.modificaProiezione(fileCsv);
+                    break;
+                case 3:
+                    Proiezioni.eliminaProiezione(fileCsv);
+
+                case 4:
+                    System.out.println("Logout effettuato.");
+                    inMenu = false;
+                    break;
+                default:
+                    System.out.println("Scelta non valida");
+            }
+        }
+    }
+
+    private static void menuBigliettaio(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni) {
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\nMenu bigliettaio");
+            System.out.println("1. visuallizare le prenotazioni nella data odierna");
+            System.out.println("2. Cercare una prenotazione");
+            System.out.println("3. Logout");
+            System.out.println("Scegli un'opzione: ");
+            int scelta = in.nextInt();
+            in.nextLine();
+
+            switch (scelta) {
+                case 1:
+                    System.out.println("Visualizzazione delle prenotazioni di oggi... ");
+                    break;
+                case 2:
+                    System.out.println("Ricerca di una prenotazione... ");
+                    break;
+                case 3:
+                    System.out.println("Logout effettuato.");
+                    inMenu = false;
+                    break;
+                default:
+                    System.out.println("Scelta non valida");
+            }
+        }
+    }
 }
+
