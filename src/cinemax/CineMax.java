@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Classe principale del progetto Cinemax
  * Gestisce l'avvio dell'applicazione...
- * @author ...
+ * @author Cialdini Daniele
  * @version 3.1.2
  */
 public class CineMax {
@@ -31,8 +31,14 @@ public class CineMax {
             System.out.println("0: Chiudo l'applicazione");
             System.out.print("Scegli un'opzione: ");
 
-            int scelta = in.nextInt();
-            in.nextLine(); //pulizia del buffer obbligatoria dopo  un nextInt()
+            int scelta;
+            try {
+                scelta = in.nextInt();
+                in.nextLine(); //pulizia del buffer obbligatoria dopo  un nextInt()
+            } catch (InputMismatchException e){
+                scelta = 0;
+            }
+
 
             switch (scelta) {
                 case 1:
@@ -42,8 +48,14 @@ public class CineMax {
                     System.out.println("2. Bigliettaio");
                     System.out.println("3. Proiezionista");
                     System.out.print("Seleziona il ruolo con cui vorresti accedere: ");
-                    int ruoloScelto = in.nextInt();
-                    in.nextLine();
+                    int ruoloScelto;
+                    try {
+                        ruoloScelto = in.nextInt();
+                        in.nextLine();
+                    } catch (InputMismatchException e)
+                    {
+                        ruoloScelto = -1;
+                    }
 
                     String ruoloString = "";
 
@@ -104,7 +116,6 @@ public class CineMax {
                     } else {
                         System.out.println("Username o Password errati ");
                     }
-
                     break; //Termina il case 1
                 case 2:
                     //Registrazione utente

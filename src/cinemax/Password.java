@@ -4,7 +4,7 @@ package cinemax;
  * Classe che gestisce la generazione di un codice hash per le password degli utenti
  * Utilizza un algoritmo basato su una base alfabetica e una dimensione della tabella hash
  * per minimizzare le collisioni e distribuire i valori
- * @author ...
+ * @author Di Trapani Daniele
  * @version 1.0
  */
 public class Password {

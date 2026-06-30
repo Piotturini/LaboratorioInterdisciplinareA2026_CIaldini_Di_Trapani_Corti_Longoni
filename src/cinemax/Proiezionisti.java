@@ -14,7 +14,7 @@ import java.util.Date;
  *        <li>Eseguire il Logout</li>
  *     </ul>
  * </p>
- * @author ...
+ * @author Corti Matteo
  * @see Utenti
  * @version 1.0
  */

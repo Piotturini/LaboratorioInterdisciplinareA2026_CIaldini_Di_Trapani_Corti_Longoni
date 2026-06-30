@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 /**
  * Classe che gestisce le proiezioni all'interno del sistema Cinemax
- * @author Matteo Corti
+ * @author Matteo Corti, Pietro Longoni
  * @version 1.8.4
  */
 

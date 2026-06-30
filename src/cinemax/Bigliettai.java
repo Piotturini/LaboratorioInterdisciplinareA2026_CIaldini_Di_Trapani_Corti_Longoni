@@ -13,7 +13,7 @@ import java.util.Date;
  *         <li>Eseguire il Logout</li>
  *     </ul>
  * </p>
- * @author ...
+ * @author Longoni Pietro
  * @see Utenti
  * @version 1.0
  */

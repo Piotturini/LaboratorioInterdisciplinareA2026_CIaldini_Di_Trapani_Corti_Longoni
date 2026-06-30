@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat; //serve per gestire la data in testo
  *         <li>Effettuare il Logout</li>
  *     </ul>
  * </p>
- * @author ...
+ * @author Cialdini Daniele
  * @see Utenti
  * @version 2.0.1
  */

@@ -8,7 +8,7 @@
      *     Questa classe funge da superclasse per tutte le tipologie di Utenti (Bigliettai, Proiezionisti, Clienti registrati e Clienti non registrati
      *     raggrupando le infomazioni anagrafiche e le credenziali di accesso comune
      * </p>
-     * @author ...
+     * @author Cialdini Daniele
      * @version 1.0.2
      */
     public abstract class Utenti {

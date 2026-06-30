@@ -13,7 +13,7 @@ import java.util.UUID;
  * Rappresenta una prenotazione effettuata da un cliente per una specifica proiezione
  * La classe gestisce la generazione di codici univoci, il calcolo del costo totale
  * e la logica di validazione temporale delle modifiche
- * @author ...
+ * @author Di Traponi Daniele
  * @version 1.8.2
  */
 public class Prenotazione {
