@@ -660,7 +660,7 @@ public class Proiezioni {
      */
     public void rimuoviPostiPrenotati(int quantita){
         if (this.postiPrenotati - quantita >= 0 ) {
-            this.postiPrenotati += quantita;
+            this.postiPrenotati -= quantita;
         }
     }
 }

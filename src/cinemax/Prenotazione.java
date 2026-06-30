@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap ;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Rappresenta una prenotazione effettuata da un cliente per una specifica proiezione
@@ -227,6 +224,7 @@ public class Prenotazione {
 
                     if (titoloPr.equalsIgnoreCase(titoloFilm) && dataPr.equals(dataOraFilm)) {
                         proiezioneAbbinata = pr;
+                        proiezioneAbbinata.aggiungiPostiPrenotati(numBiglietti);
                         break;
                     }
                 }
@@ -291,6 +289,18 @@ public class Prenotazione {
             return;
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try {
+            String dataPulita = proiezioneScelta.getDataOra().replace("\"", "").trim();
+            LocalDateTime dataOraProiezione = LocalDateTime.parse(dataPulita, formatter);
+            if (LocalDateTime.now().isAfter(dataOraProiezione)) {
+                System.out.println("Errore: Impossibile prenotare per uno spettacolo già iniziato o concluso!");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Errore durante il controllo della data dello spettacolo.");
+            return;
+        }
 
         System.out.print("quanti biglietti desideri acquistare? ");
         int quantita = in.nextInt();
@@ -307,12 +317,13 @@ public class Prenotazione {
                         proiezioneScelta.getPrezzo()
                 );
                 Prenotazione nuovaP = new Prenotazione(utenteAcquirente, proiezioneScelta, filmAssociato, quantita);
+                proiezioneScelta.aggiungiPostiPrenotati(quantita);
                 nuovaP.salvaSufile(filePrenotazioni, elencoProiezioni);
                 mappaPrenotazioni.put(nuovaP.getCodice().toUpperCase(), nuovaP);
 
                 System.out.println("prenotazione creata! codice: " + nuovaP.getCodice() );
             } else {
-                System.out.println("posti insufficenti.");
+                System.out.println("posti insufficienti.");
             }
     }
 
@@ -351,7 +362,7 @@ public class Prenotazione {
      * @param fileCsv Percorso del file CSV dei film
      */
     public static void modificaPrenotazione(java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv) {
-        System.out.println("Inizio modfica prenotazione");
+        System.out.println("Inizio modifica prenotazione");
         System.out.println("Inserisci il codice del biglietto da variare;");
         String codice = in.nextLine().toUpperCase().trim();
         if (!mappaPrenotazioni.containsKey(codice)){
@@ -365,7 +376,7 @@ public class Prenotazione {
         System.out.println("Posti attuali: " + p.getNumBiglietti());
 
         if (!p.IsModificabile()) {
-            System.out.println("inpossibile modificare spettacolo gia iniziato");
+            System.out.println("Impossibile modificare: spettacolo è gia iniziato o passato.");
             return;
         }
 
@@ -376,47 +387,72 @@ public class Prenotazione {
 
         if (!sceltaCambioSpettacolo.isEmpty() && sceltaCambioSpettacolo.equals("si")) {
             Proiezioni.cercaProiezione(fileCsv);
-            System.out.print("\ninserisci il numero progressivo del nuovo spettacolo: (1 per il primo, 2 per il secondo...");
-            String inpuId = in.nextLine().trim();
+            System.out.print("Conferma il titolo del nuovo film visto a schermo: ");
+            String titoloScelto = in.nextLine().trim();
+            System.out.print("Conferma l'orario e la data dello spettacolo (es. yyyy-MM-dd HH:mm:ss): ");
+            String dataScelta = in.nextLine().trim();
 
-            if (!inpuId.isEmpty()) {
-                try {
-                    int indiceLista = Integer.parseInt(inpuId) - 1;
-                    if (indiceLista >= 0 && indiceLista < elencoProiezioni.size()) {
-                        nuovaProiezione = elencoProiezioni.get(indiceLista);
-                    } else {
-                        System.out.println("Selezione fuori intervallo. modifica non effetutata");
+            Proiezioni proiezioneTrovata = null;
+            for (Proiezioni pr : elencoProiezioni) {
+                String titoloPr = pr.getTitolo().replace("\"", "").trim();
+                String dataPr = pr.getDataOra().replace("\"", "").trim();
+
+                if (titoloPr.equalsIgnoreCase(titoloScelto) && dataPr.contains(dataScelta)) {
+                    proiezioneTrovata = pr;
+                    break;
                 }
-            } catch (NumberFormatException e) {
-                    System.out.println("input non valido. modifica non effettuata");
-                }
+            }
+            if (proiezioneTrovata != null) {
+                nuovaProiezione = proiezioneTrovata;
+            } else {
+                System.out.println("Spettacolo non trovato. Modifica dello spettacolo annullata.");
+            }
         }
-    }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try {
+            String dataPulita = nuovaProiezione.getDataOra().replace("\"", "").trim();
+            LocalDateTime dataOraProiezione = LocalDateTime.parse(dataPulita,formatter);
+            if (LocalDateTime.now().isAfter(dataOraProiezione)) {
+                System.out.println("Errore: Impossibile spostare la prenotazione su uno spettacolo già iniziato o passato!");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Errore di valutazione data dello spettacolo.");
+            return;
+        }
+
         int nuoviPosti = p.getNumBiglietti();
-        System.out.println("inserire il nuovo numero totale di biglietti (premi invio oer non cambiarli");
+        System.out.println("Inserire il nuovo numero totale di biglietti (premi invio per non cambiarli");
         String inputPosti = in.nextLine().trim();
         if (!inputPosti.isEmpty()) {
             try {
                 nuoviPosti = Integer.parseInt(inputPosti);
-                if (nuoviPosti <= 0) {
-                    System.out.println("Quantità non valida. Mantenuti i posti precedenti.");
-                    nuoviPosti = p.getNumBiglietti();
-                }
+                    if (nuoviPosti <= 0) {
+                        System.out.println("Quantità non valida. Mantenuti i posti precedenti.");
+                        nuoviPosti = p.getNumBiglietti();
+                    }
                 } catch (NumberFormatException e) {
-                    System.out.println("input non numerico. mantenuti i posti precedenti");
+                    System.out.println("Input non numerico. mantenuti i posti precedenti");
                 }
             }
-            int postiDisponibili;
+
+        int postiDisponibili;
         if (nuovaProiezione == p.getProiezione()) {
             postiDisponibili = nuovaProiezione.getPostiLiberi() + p.getNumBiglietti();
         } else {
             postiDisponibili = nuovaProiezione.getPostiLiberi();
         }
         if (nuoviPosti > postiDisponibili ) {
-            System.out.println("impossibile salvare le modifiche posti insufficenti");
+            System.out.println("impossibile salvare le modifiche posti insufficienti");
             return;
         }
+
+        // AGGIORNAMENTO POSTI IN MEMORIA
         if (nuovaProiezione != p.getProiezione()) {
+            p.getProiezione().rimuoviPostiPrenotati(p.getNumBiglietti());
+            nuovaProiezione.aggiungiPostiPrenotati(nuoviPosti);
+
             p.proiezione = nuovaProiezione;
             p.film = new Film(
                     nuovaProiezione.getTitolo(), nuovaProiezione.getGenere(),
@@ -424,7 +460,15 @@ public class Prenotazione {
                     nuovaProiezione.getDurata(), nuovaProiezione.getEtaMinima(),
                     nuovaProiezione.getPrezzo()
             );
+        } else {
+            int diff = nuoviPosti - p.getNumBiglietti();
+            if (diff > 0) {
+                p.getProiezione().aggiungiPostiPrenotati(diff);
+            } else if (diff < 0) {
+                p.getProiezione().rimuoviPostiPrenotati(-diff);
+            }
         }
+
         p.numBiglietti = nuoviPosti;
         sovrascriviFile(filePrenotazioni,mappaPrenotazioni,elencoProiezioni);
         System.out.println("\n Nuova prenotazione");
