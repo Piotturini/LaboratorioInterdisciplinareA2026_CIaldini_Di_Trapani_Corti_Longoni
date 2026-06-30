@@ -12,7 +12,7 @@ import java.util.Date;
  *         <li>Effettuare la registrazione all'applicazione come cliente</li>
  *     </ul>
  * </p>
- * @author ...
+ * @author Cialdini Daniele
  * @see Utenti
  * @version 1.0
  */

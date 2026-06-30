@@ -4,7 +4,7 @@ package cinemax;
  * Rappresenta un film all'interno del sistema di gestione Cinemax.
  * La classe memorizza informazioni dettagliate come titolo, genere,
  * dettagli tecnici e registrazioni sull'età
- * @author
+ * @author Corti Matteo
  * @version 1.0
  */
 
