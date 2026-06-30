@@ -633,4 +633,34 @@ public class Proiezioni {
             System.out.println("Scelta non valida, operazione annullata");
         }
     }
+    /**
+     * Incrementa il numero dei posti attualmente prenotati per la proiezione.
+     * <p>
+     *     Questo metodo viene invocato durante la creazione di una nuova prenotazione
+     *     oppure al caricamento storico dei dati dal file. Include un controllo di
+     *     sicurezza per assicurarsi che i posti occupati non eccedano mai la
+     *     capienza massima della sala.
+     * </p>
+     * @param quantita Il numero di biglietti da sommare ai posti già occupati
+     */
+    public void aggiungiPostiPrenotati(int quantita){
+        if (this.postiPrenotati + quantita <= capienzaSala){
+            this.postiPrenotati += quantita;
+
+        }
+    }
+    /**
+     * Decrementa il numero dei posti attualmente prenotati per la proiezione.
+     * <p>
+     *     Questo metodo serve per liberare i posti in caso di cancellazione
+     *     o riduzione di una prenotazione esistente. Previene automaticamente
+     *     il rischio che il calcolo dei posti occupati assuma valori negativi.
+     * </p>
+     * @param quantita Il numero di biglietti da sottrarre dai posti occupati
+     */
+    public void rimuoviPostiPrenotati(int quantita){
+        if (this.postiPrenotati - quantita >= 0 ) {
+            this.postiPrenotati += quantita;
+        }
+    }
 }
