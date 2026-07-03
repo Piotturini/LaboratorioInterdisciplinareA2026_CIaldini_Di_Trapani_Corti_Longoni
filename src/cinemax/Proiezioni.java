@@ -77,7 +77,6 @@ public class Proiezioni {
      * </ul>
      * @param percorsoFile percorso proiezioni.csv
      * @return Una {@link List} di oggetti {@link Proiezioni} caricati correttamente
-     * @throws IOException Se si verifica un errore di accesso al file
      */
     public static List<Proiezioni> caricaDaCSV(String percorsoFile) {
         List<Proiezioni> listaP = new ArrayList<>();
@@ -418,18 +417,24 @@ public class Proiezioni {
         System.out.print("Regista: ");
         String regista = in.nextLine();
 
-        System.out.print("Anno di uscita: ");
-        int anno = in.nextInt();
+        int anno = CineMax.leggiIntero(in, "Anno di uscita: ");
+        int durata = CineMax.leggiIntero(in, "Durata (in minuti): ");
+        int etaMinima = CineMax.leggiIntero(in, "Età minima consentita (0 se per tutti): ");
 
-        System.out.print("Durata (in minuti): ");
-        int durata = in.nextInt();
-
-        System.out.print("Età minima consentita (0 se per tutti): ");
-        int etaMinima = in.nextInt();
-        in.nextLine();
-
-        System.out.print("Costo del biglietto (es. 7.50): ");
-        double prezzo = Double.parseDouble(in.nextLine().replace(",", "."));
+        double prezzo = -1;
+        while (true) {
+            System.out.print("Costo del biglietto (es. 7.50): ");
+            try {
+                prezzo = Double.parseDouble(in.nextLine().trim().replace(",", "."));
+                if (prezzo < 0) {
+                    System.out.println("Errore: il prezzo non può essere negativo.");
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Errore: Inserisci un prezzo numerico valido.");
+            }
+        }
 
         System.out.print("Data e Ora di inizio (formato yyyy-MM-dd HH:mm:ss): ");
         String dataOraStr = in.nextLine();
@@ -500,8 +505,7 @@ public class Proiezioni {
      * </p>
       * @param percorsoFile Percorso del file CSV da aggiornare
      */
-    public static void modificaProiezione(String percorsoFile) {
-        List<Proiezioni> elenco = caricaDaCSV(percorsoFile);
+    public static void modificaProiezione(String percorsoFile, List<Proiezioni> elenco) {
         if (elenco.isEmpty()) {
             System.out.println("Nessuna proiezione presente nel sistema");
             return;
@@ -512,74 +516,117 @@ public class Proiezioni {
         // Mostriamo l'elenco numerato
         System.out.println("Seleziona il numero della proiezione da modificare:");
         for (int i = 0; i < elenco.size(); i++) {
-            System.out.println((i + 1) + ". " + elenco.get(i).titolo);
+            System.out.println((i + 1) + ". " + elenco.get(i).titolo + " (Data: " + elenco.get(i).dataOra + ")");
         }
 
-        int scelta = in.nextInt();
-        in.nextLine(); // pulizia buffer
+        System.out.print("Scelta: ");
+        int scelta;
+        try {
+            scelta = Integer.parseInt(in.nextLine().trim());
+        } catch (NumberFormatException e) {
+            scelta = -1;
+        }
 
         if (scelta > 0 && scelta <= elenco.size()) {
             Proiezioni p = elenco.get(scelta - 1);
 
             // Controllo vincolo: nessuna prenotazione
             if (p.postiPrenotati > 0) {
-                System.out.println("Impossibile modificare la proiezione: ci sono già" + p.postiPrenotati + " posti prenotati");
+                System.out.println("Impossibile modificare la proiezione: ci sono già " + p.postiPrenotati + " posti prenotati");
                 return;
             }
 
             // Inserimento dei nuovi dati
-            System.out.println("Modifica di: " + p.getTitolo());
+            System.out.println("\nModifica di: " + p.getTitolo());
 
             System.out.println("Nuovo Titolo (premi INVIO per non cambiarlo): ");
-            String nuovoTitolo = in.nextLine();
+            String nuovoTitolo = in.nextLine().trim();
             if (!nuovoTitolo.isEmpty()) {
                 p.setTitolo(nuovoTitolo);
             }
 
-            System.out.println("Nuovo Genere (preme INVIO per non cambiarlo): ");
-            String nuovoGenere = in.nextLine();
+            System.out.println("Nuovo Genere (premi INVIO per non cambiarlo): ");
+            String nuovoGenere = in.nextLine().trim();
             if (!nuovoGenere.isEmpty()) {
                 p.setGenere(nuovoGenere);
             }
 
             System.out.println("Nuovo Regista (premi INVIO per non cambiarlo): ");
-            String nuovoRegista = in.nextLine();
+            String nuovoRegista = in.nextLine().trim();
             if (!nuovoRegista.isEmpty()) {
                 p.setRegista(nuovoRegista);
             }
 
             System.out.println("Nuovo anno (premi INVIO per non cambiarlo): ");
-            String nuovoAnnostr = in.nextLine();
+            String nuovoAnnostr = in.nextLine().trim();
             if (!nuovoAnnostr.isEmpty()) {
-                int nuovoAnno = Integer.parseInt(nuovoAnnostr.trim());
-                p.setAnno(nuovoAnno);
+                try {
+                    int nuovoAnno = Integer.parseInt(nuovoAnnostr);
+                    p.setAnno(nuovoAnno);
+                } catch (NumberFormatException e) {
+                    System.out.println("Errore: Anno non valido. Mantenuto anno precedente.");
+                }
             }
 
             System.out.println("Nuova Durata (premi INVIO per non cambiarlo): ");
-            String nuovaDuratastr = in.nextLine();
+            String nuovaDuratastr = in.nextLine().trim();
             if (!nuovaDuratastr.isEmpty()) {
-                int nuovaDurata = Integer.parseInt(nuovaDuratastr.trim());
-                p.setDurata(nuovaDurata);
+                try {
+                    int nuovaDurata = Integer.parseInt(nuovaDuratastr);
+                    p.setDurata(nuovaDurata);
+                } catch (NumberFormatException e) {
+                    System.out.println("Errore: Durata non valida. Mantenuta durata precedente.");
+                }
             }
 
             System.out.println("Nuova età minima (premi INVIO per non cambiarlo): ");
-            String nuovaEtaMinimastr = in.nextLine();
+            String nuovaEtaMinimastr = in.nextLine().trim();
             if (!nuovaEtaMinimastr.isEmpty()) {
-                int nuovaEtaMinima = Integer.parseInt(nuovaEtaMinimastr.trim());
-                p.setEtaMinima(nuovaEtaMinima);
+                try {
+                    int nuovaEtaMinima = Integer.parseInt(nuovaEtaMinimastr);
+                    p.setEtaMinima(nuovaEtaMinima);
+                } catch (NumberFormatException e) {
+                    System.out.println("Errore: Età non valida. Mantenuta età precedente.");
+                }
             }
 
             System.out.println("Nuovo Prezzo (premi INVIO per non cambiarlo): ");
-            String nuovoPrezzostr = in.nextLine();
+            String nuovoPrezzostr = in.nextLine().trim();
             if (!nuovoPrezzostr.isEmpty()) {
-                double nuovoPrezzo = Double.parseDouble(nuovoPrezzostr.trim().replace(",", "."));
-                p.setPrezzo(nuovoPrezzo);
+                try {
+                    double nuovoPrezzo = Double.parseDouble(nuovoPrezzostr.replace(",", "."));
+                    p.setPrezzo(nuovoPrezzo);
+                } catch (NumberFormatException e) {
+                    System.out.println("Errore: Prezzo non valido. Mantenuto prezzo precedente.");
+                }
             }
 
-            System.out.println("Nuova Data/Ora (premi INVIO per non cambiarlo): ");
-            String nuovaData = in.nextLine();
+            System.out.println("Nuova Data/Ora (formato yyyy-MM-dd HH:mm:ss, premi INVIO per non cambiarlo): ");
+            String nuovaData = in.nextLine().trim();
             if (!nuovaData.isEmpty()) {
-                p.setDataOra(nuovaData);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                try {
+                    LocalDateTime inizioNuova = LocalDateTime.parse(nuovaData, formatter);
+                    LocalDateTime fineNuova = inizioNuova.plusMinutes(p.getDurata());
+                    boolean sovrapposizione = false;
+                    for (Proiezioni esistente : elenco) {
+                        if (esistente == p) continue;
+                        String dataPulita = esistente.getDataOra().replace("\"", "").trim();
+                        LocalDateTime inizioEsistente = LocalDateTime.parse(dataPulita, formatter);
+                        LocalDateTime fineEsistente = inizioEsistente.plusMinutes(esistente.getDurata());
+                        if (inizioNuova.isBefore(fineEsistente) && fineNuova.isAfter(inizioEsistente)) {
+                            sovrapposizione = true;
+                            break;
+                        }
+                    }
+                    if (sovrapposizione) {
+                        System.out.println("Errore: La nuova data si sovrappone con un'altra proiezione esistente! Modifica data annullata.");
+                    } else {
+                        p.setDataOra(nuovaData);
+                    }
+                } catch (DateTimeParseException e) {
+                    System.out.println("Errore: Formato data non valido. Modifica data annullata.");
+                }
             }
 
             // Salvataggio definitivo
@@ -599,9 +646,7 @@ public class Proiezioni {
      * </p>
      * @param percorsoFile Percorso del file CSV da cui rimuovere una proiezione
      */
-    public static void eliminaProiezione(String percorsoFile) {
-        List<Proiezioni> elenco = Proiezioni.caricaDaCSV(percorsoFile);
-
+    public static void eliminaProiezione(String percorsoFile, List<Proiezioni> elenco) {
         if (elenco.isEmpty()) {
             System.out.println("Nessuna proiezione presente nel sistema");
             return;
@@ -611,12 +656,16 @@ public class Proiezioni {
 
         // mostriamo l'elenco numerato per far scegliere all'utente la proiezione da eliminare
         for (int i = 0; i < elenco.size(); i++) {
-            System.out.println((i + 1) + ". " + elenco.get(i).titolo);
+            System.out.println((i + 1) + ". " + elenco.get(i).titolo + " (Data: " + elenco.get(i).dataOra + ")");
         }
 
-        System.out.println("Inserisci il numero della proiezione da eliminare");
-        int scelta = in.nextInt();
-        in.nextLine(); // pulizia buffer
+        System.out.print("Inserisci il numero della proiezione da eliminare: ");
+        int scelta;
+        try {
+            scelta = Integer.parseInt(in.nextLine().trim());
+        } catch (NumberFormatException e) {
+            scelta = -1;
+        }
 
         if (scelta > 0 && scelta <= elenco.size()) {
             Proiezioni daEliminare = elenco.get(scelta - 1);
