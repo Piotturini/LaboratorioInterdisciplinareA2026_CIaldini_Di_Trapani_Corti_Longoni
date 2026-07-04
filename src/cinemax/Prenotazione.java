@@ -17,7 +17,7 @@ public class Prenotazione {
 
     // CAMPI
     private String codice;
-    private  String usernamenCliente;
+    private  String usernameCliente;
     private Proiezioni proiezione;//associazione diretta alla classe Proiezioni
     private Film film; // associazione diretta alla classe film
     private int numBiglietti;
@@ -32,7 +32,7 @@ public class Prenotazione {
      * @param numBiglietti Quantità di biglietti da acquistare
      */
     public Prenotazione (String usernameCliente, Proiezioni proiezioni, Film film, int numBiglietti){
-        this.usernamenCliente = usernameCliente;
+        this.usernameCliente = usernameCliente;
         this.proiezione = proiezioni;
         this.numBiglietti = numBiglietti;
         this.film = film;
@@ -50,7 +50,7 @@ public class Prenotazione {
      */
     public Prenotazione (String codice, String usernameCliente, Proiezioni proiezioni, Film film, int numBiglietti){
         this.codice = codice;
-        this.usernamenCliente = usernameCliente;
+        this.usernameCliente = usernameCliente;
         this.proiezione= proiezioni;
         this.film = film;
         this.numBiglietti = numBiglietti;
@@ -132,7 +132,7 @@ public class Prenotazione {
      * @return Stringa dello username
      */
     public String getUsernamenCliente() {
-        return usernamenCliente;
+        return usernameCliente;
     }
 
     /**
@@ -183,7 +183,7 @@ public class Prenotazione {
             // Scrittura in chiaro: CODICE;ACQUIRENTE;FILM;REGISTA;DATA;BIGLIETTI;PREZZO
             String rigaSalvataggio = String.format(java.util.Locale.US, "%s;%s;%s;%s;%s;%d;%.2f",
                     this.codice,
-                    this.usernamenCliente,
+                    this.usernameCliente,
                     nomeFilm,
                     regista,
                     dataFilm,
@@ -476,4 +476,97 @@ public class Prenotazione {
         System.out.println("Posti occupati" + p.getNumBiglietti());
         System.out.println("Nuova spesa " + p.getCostoTotale() +"€");
         }
-}
+    /**
+     * Procedura per la cancellazione di una prenotazione esistente
+     * @param in Scanner per l'input dell'utente
+     * @param filePrenotazioni Percorso del file prenotazioni
+     * @param elencoProiezioni Lista proiezioni corrente
+     * @param mappaPrenotazioni Mappa delle prenotazioni
+     */
+    public static void cancellaPrenotazione(java.util.Scanner in, String filePrenotazioni,
+                                            List<Proiezioni> elencoProiezioni, Map<String, Prenotazione> mappaPrenotazioni) {
+        System.out.println("Inizio cancellazione prenotazione");
+        System.out.println("Inserisci il codice del biglietto da annullare:");
+        String codice = in.nextLine().toUpperCase().trim();
+
+        if (!mappaPrenotazioni.containsKey(codice)) {
+            System.out.println("codice prenotazione inesistente");
+            return;
+        }
+       Prenotazione p = mappaPrenotazioni.get(codice);
+        if (!p.IsModificabile()) {
+            System.out.println("impossibile cancellare lo spettacolo è gia iniziato o passato");
+            return;
+        }
+        System.out.println("\nBiglietto individuato:");
+        System.out.println("Film: " + p.getFilm().getTitolo());
+        System.out.println("Data/Ora: " + p.getProiezione().getDataOra());
+        System.out.println("Posti da rimborsare: " + p.getNumBiglietti());
+
+        System.out.println("sei sicuro di voler annullare questa prenotazione? (si/no): ");
+        String conferma = in.nextLine().trim().toLowerCase();
+
+        if (conferma.equals("si")) {
+            // 1. Ripristina i posti liberi della proiezione
+            p.getProiezione().rimuoviPostiPrenotati(p.getNumBiglietti());
+
+            // 2. Rimuove la prenotazione dalla memoria
+            mappaPrenotazioni.remove(codice);
+
+            // 3. Aggiorna il file
+            sovrascriviFile(filePrenotazioni, mappaPrenotazioni, elencoProiezioni);
+            System.out.println("Prenotazione cancellata con successo e posti liberati.");
+        } else {
+            System.out.println("Cancellazione annullata.");
+        }
+    }
+    /**
+     * Mostra a schermo tutte le prenotazioni relative a uno specifico utente
+     * @param username Lo username dell'utente
+     * @param mappaPrenotazioni La mappa contenente tutte le prenotazioni
+     */
+    public static void visualizzaPrenotazioniUtente (String username, Map<String, Prenotazione> mappaPrenotazioni){
+        System.out.println(("\n--- Le tue prenotazioni --- "));
+        boolean trovate = false;
+        for (Prenotazione p : mappaPrenotazioni.values()){
+            if (p.getUsernamenCliente().equalsIgnoreCase(username)){
+                System.out.println("- Codice: " + p.getCodice() +
+                        "| Film: " + p.getFilm().getTitolo() +
+                        "| Data: " + p.getProiezione().getDataOra() +
+                        "| Posti: " + p.getNumBiglietti() +
+                        "| Costo: " + String.format("%.2f", p.getCostoTotale()) + "€");
+                trovate = true;
+            }
+        }
+        if (!trovate) {
+            System.out.println("Nessuna prenotazione trovata per il tuo account.");
+        }
+        System.out.println("---------------------------\n");
+    }
+    /**
+     * Mostra a schermo tutte le prenotazioni previste per la data odierna
+     * @param mappaPrenotazioni La mappa contenente tutte le prenotazioni
+     */
+    public static void visualizzaPrenotazioniOdierne(Map<String, Prenotazione> mappaPrenotazioni) {
+        System.out.println("\n--- Prenotazioni di Oggi ---");
+        boolean trovate = false;
+
+        String dataOggi = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        for(Prenotazione p: mappaPrenotazioni.values()){
+            if (p.getProiezione().getDataOra().contains(dataOggi)){
+                System.out.println("- Codice: " + p.getCodice() +
+                        "| Cliente: " + p.getUsernamenCliente() +
+                        "| Film: " + p.getFilm().getTitolo() +
+                        "| Orario: " + p.getProiezione().getDataOra() +
+                        "| Posti: " + p.getNumBiglietti());
+                trovate = true;
+            }
+        }
+
+        if (!trovate) {
+            System.out.println("Nessuna prenotazione trovata per gli spettacoli di oggi.");
+        }
+        System.out.println("\n");
+    }
+    }
