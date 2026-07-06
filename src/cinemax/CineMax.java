@@ -266,7 +266,7 @@ public class CineMax {
 
             switch (scelta) {
                 case 1:
-                    Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, utenteLoggato.getUsername());
+                    Prenotazione.creaPrenotazione(in,filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
                     break;
                 case 2:
                     System.out.println("\nLE TUE PRENOTAZIONI:");
@@ -290,7 +290,7 @@ public class CineMax {
                     if (sottoscelta == 1) {
                         Prenotazione.modificaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
                     } else if (sottoscelta == 2) {
-                        Prenotazione.eliminaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, utenteLoggato.getUsername());
+                        Prenotazione.cancellaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni);
                     }
                     break;
                 case 4:
@@ -367,7 +367,7 @@ public class CineMax {
                      }
                     break;
                 case 2:
-                    Prenotazione.CercaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, listaUtenti);
+                    Prenotazione.CercaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
                     break;
                 case 3:
                     System.out.println("Logout effettuato.");
