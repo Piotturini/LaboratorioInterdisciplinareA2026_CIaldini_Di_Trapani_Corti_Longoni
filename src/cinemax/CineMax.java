@@ -31,13 +31,7 @@ public class CineMax {
             System.out.println("0: Chiudo l'applicazione");
             System.out.print("Scegli un'opzione: ");
 
-            int scelta;
-            try {
-                scelta = in.nextInt();
-                in.nextLine(); //pulizia del buffer obbligatoria dopo  un nextInt()
-            } catch (InputMismatchException e){
-                scelta = 0;
-            }
+            int scelta = leggiIntero(in, "Scegli un'opzione");
 
 
             switch (scelta) {
@@ -47,16 +41,7 @@ public class CineMax {
                     System.out.println("1. Cliente");
                     System.out.println("2. Bigliettaio");
                     System.out.println("3. Proiezionista");
-                    System.out.print("Seleziona il ruolo con cui vorresti accedere: ");
-                    int ruoloScelto;
-                    try {
-                        ruoloScelto = in.nextInt();
-                        in.nextLine();
-                    } catch (InputMismatchException e)
-                    {
-                        ruoloScelto = -1;
-                    }
-
+                    int ruoloScelto = leggiIntero(in, "Seleziona il ruolo con cui vorresti accedere: ");
                     String ruoloString = "";
 
                     switch (ruoloScelto) {
@@ -101,10 +86,10 @@ public class CineMax {
 
                         switch (utenteAutenticato.getRuolo().toLowerCase()) {
                             case "cliente":
-                                menuClienteRegistrato(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
+                                menuClienteRegistrato(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, utenteAutenticato);
                                 break;
                             case "bigliettaio":
-                                menuBigliettaio(in, filePrenotazioni, elenco, mappaPrenotazioni);
+                                menuBigliettaio(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, listaUtenti);
                                 break;
                             case "proiezionista":
                                 menuProiezionista(in, fileCsv, elenco);
@@ -118,39 +103,10 @@ public class CineMax {
                     }
                     break; //Termina il case 1
                 case 2:
-                    //Registrazione utente
-                    System.out.print("Nome "); String nome = in.nextLine();
-                    System.out.print("Cognome "); String cognome = in.nextLine();
-                    System.out.print("Scegli Username: "); String nuovoUser = in.nextLine();
-                    System.out.print("Scegli Password: "); String nuovaPass = in.nextLine();
-
-                    //chiediamo la data di nascita all'utente in formato testo
-                    System.out.print("Data di nascita (gg/mm/aaaa): ");
-                    String dataInput = in.nextLine();
-                    System.out.print("Città di domicilio:  "); String citta = in.nextLine();
-
-                    //Convertiamo il testo inserito dall'utente in un vero oggetto Date
-                    Date dataNascitaUtente;
-                    try{
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        dataNascitaUtente = sdf.parse(dataInput);
-                    } catch (Exception e) {
-                        System.out.println("Formato data non valido. Verrà impostata la data odierna");
-                        dataNascitaUtente = new Date();
-                    }
-
-                    //creiamo l'oggetto usando i dati inseriti
-                    Registrati nuovo = new Registrati(nome, cognome, nuovoUser, nuovaPass, dataNascitaUtente, citta, "Cliente");
-                    Password gestoreCifratura = new Password(nuovo);
-
-                    nuovo.setPassword(String.valueOf(gestoreCifratura.hash()));
-                    //lo salviamo fisicamente nel file txt
-                    nuovo.salvaSuFile(fileUtenti);
-                    listaUtenti.add(nuovo);
-                    System.out.println("Registrazione completata con successo");
+                    registraNuovoCliente(in, fileUtenti, listaUtenti);
                     break;
                 case 3:
-                    menuGuest(in);
+                    menuGuest(in, fileCsv, elenco, fileUtenti, listaUtenti);
                     break;
                 case 0:
                     System.out.println("Grazie per aver usato Cinemax! ");
@@ -165,31 +121,129 @@ public class CineMax {
 
     //Sottomenu
 
-    private static void menuGuest(Scanner in){
+    public static int leggiIntero(Scanner in, String prompt){
+        while (true) {
+            System.out.print(prompt);
+            try{
+                return Integer.parseInt(in.nextLine().trim());
+            } catch (NumberFormatException e){
+                System.out.println("Errore: inserisci un numero intero valido.");
+            }
+        }
+    }
+
+    private static void registraNuovoCliente(Scanner in, String fileUtenti, List<Registrati> listaUtenti) {
+        System.out.println("\nRegistrazione nuovo cliente");
+        System.out.print("Nome ");
+        String nome = in.nextLine().trim();
+        System.out.print("Cognome ");
+        String cognome = in.nextLine().trim();
+
+        String nuovoUser = "";
+        while (true) {
+            System.out.print("Scegli Username");
+            nuovoUser = in.nextLine().trim();
+            if (nuovoUser.isEmpty()){
+                System.out.println("Errore: lo username non può essere vuoto. ");
+                continue;
+            }
+            boolean duplicato = false;
+            for (Registrati u: listaUtenti) {
+                if (u.getUsername().equalsIgnoreCase(nuovoUser)) {
+                    duplicato = true;
+                    break;
+                }
+            }
+            if (duplicato){
+                System.out.println("Errore: questo username è già registrato nel sistema!");
+            } else {
+                break;
+            }
+        }
+        String nuovaPass = "";
+        while (true) {
+            System.out.print("Scegli Password: ");
+            nuovaPass = in.nextLine().trim();
+            if (nuovaPass.isEmpty()){
+                System.out.println("Errore: la password non può essere vuota.");
+                continue;
+            }
+            break;
+        }
+
+        System.out.print("Data di nascita (gg/mm/aaaa, premi INVIO per saltare): ");
+        String dataInput = in.nextLine().trim();
+
+        Date dataNascitaUtente = null;
+        if (!dataInput.isEmpty()) {
+            try{
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dataNascitaUtente = sdf.parse(dataInput);
+            } catch (Exception e) {
+                System.out.println("Formato data non valido. Verrà impostata la data odierna");
+                dataNascitaUtente = new Date();
+            }
+        } else {
+            dataNascitaUtente = new Date();
+        }
+
+        System.out.print("Città di domicilio: ");
+        String citta = in.nextLine().trim();
+
+        Registrati nuovo = new Registrati(nome, cognome, nuovoUser, nuovaPass, dataNascitaUtente, citta, "Cliente");
+        Password gestoreCifratura = new Password(nuovo);
+
+        nuovo.setPassword(String.valueOf(gestoreCifratura.hash()));
+
+        nuovo.salvaSuFile(fileUtenti);
+        listaUtenti.add(nuovo);
+        System.out.println("Registrazione completata con successo! Ora puoi effettuare il login");
+    }
+
+    private static void menuGuest(Scanner in, String fileCsv, List<Proiezioni> elenco, String fileUtenti, List<Registrati> listaUtenti) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\nMenu guest");
             System.out.println("1. cercare proiezioni");
-            System.out.println("2. visualizzare i dettagli delle proiezioni");
+            System.out.println("2. visualizzare i dettagli di una proiezione");
             System.out.println("3. registrati all'applicazione come cliente");
-            System.out.println("4. Torna al menu principale (Esci) ");
-            System.out.println("Scegli un'opzione: ");
-            int scelta = in.nextInt();
-            in.nextLine();
+            System.out.println("4. Torna al menu principale ");
+
+            int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
             switch (scelta) {
                 case 1:
-                    System.out.println("Ricerca proiezioni... ");
+                    System.out.print("Inserisci il titolo del film (anche parziale): ");
+                    String titoloCercato = in.nextLine().trim().toLowerCase();
+                    System.out.println("\nProiezioni in programmazione per \"" + titoloCercato + "\":");
+                    int ris = 0;
+                    for (int i=0; i < elenco.size(); i++){
+                        Proiezioni pr = elenco.get(i);
+                        if (pr.getTitolo().toLowerCase().contains(titoloCercato)){
+                            System.out.println((i + 1) + ". DATA: " + pr.getDataOra()) + " | FILM: " + pr.getTitolo() + " | GENERE: " + pr.getGenere() + " | PREZZO: " + pr.getPrezzo() + " €");
+                            ris++;
+                        }
+                    }
+                    if (ris == 0) {
+                        System.out.println("Nessun film in programmazione corrisponde alla tua ricerca.");
+                    }
                     break;
+
                 case 2:
-                    System.out.println("visualizzazione dettagli proiezioni...");
+                    System.out.print("Inserisci il numero progressivo della proiezion vista a schermo: ");
+                    int prog = leggiIntero(in, "Numero proiezione: ");
+                    if (prog > 0 && prog <= elenco.size()){
+                        Proiezioni.visualizzaProiezione(elenco.get(prog - 1));
+                    } else {
+                        System.out.println("Scelta non valida.");
+                    }
                     break;
                 case 3:
-                    System.out.println("Uscire dal menu guest e selezionare l'opzione 2 del menu principale per registrarsi. ");
+                    registraNuovoCliente(in, fileUtenti, listaUtenti);
                     inMenu = false;
                     break;
                 case 4:
-                    System.out.println("Logout effettuato.");
+                    System.out.println("Ritorno al menu principale");
                     inMenu = false;
                     break;
                 default:
@@ -198,27 +252,47 @@ public class CineMax {
         }
     }
 
-    private static void menuClienteRegistrato(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni, String fileCsv){
+    private static void menuClienteRegistrato(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni, String fileCsv, Registrati utenteLoggato){
         boolean inMenu = true;
         while (inMenu) {
-            System.out.println("\nMenu cliente registrato");
-            System.out.println("1. inserire una prenotazione");
+            System.out.println("\nMenu cliente registrato (" + utenteLoggato.getUsername() + ")");
+            System.out.println("1. Effettuare una prenotazione");
             System.out.println("2. visualizzare le proprie prenotazioni");
             System.out.println("3. modificare e cancellare le proprie prenotazioni");
             System.out.println("4. Logout");
             System.out.println("Scegli un'opzione: ");
-            int scelta = in.nextInt();
-            in.nextLine();
+
+            int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
             switch (scelta) {
                 case 1:
-                    Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
+                    Prenotazione.creaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, utenteLoggato.getUsername());
                     break;
                 case 2:
-                    System.out.println("Visualizzazione delle tue prenotazioni... ");
-                break;
+                    System.out.println("\nLE TUE PRENOTAZIONI:");
+                    int count = 0;
+                    for (Prenotazione p: mappaPrenotazioni.values()) {
+                        if (p.getUsernamenCliente().equalsIgnoreCase(utenteLoggato.getUsername())) {
+                            System.out.println("- Codice: " + p.getCodice() + " | Film: \"" + p.getFilm().getTitolo() + "\" | Data: " + p.getProiezione().getDataOra() + " | Posti: " + p.getNumBiglietti() + " | Costo totale: " + String.format(Locale.US, "%.2f", p.getCostoTotale()) + " €");
+                            count++;
+                        }
+                    }
+                    if (count == 0) {
+                        System.out.println(" Non hai effettuato alcuna prenotazione.");
+                    }
+                    break;
                 case 3:
-                    System.out.println("Modifica/cancellazione prenotazioni...");
+                    System.out.println("\nGESTIONE PRENOTAZIONE");
+                    System.out.println("1. Modifica prenotazione (Cambio film/posti)");
+                    System.out.println("2. Cancella prenotazione (Rimborso)");
+                    System.out.println("3. Indietro");
+                    int sottoscelta = leggiIntero(in, "Scegli un'opzione");
+                    if (sottoscelta == 1) {
+                        Prenotazione.modificaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
+                    } else if (sottoscelta == 2) {
+                        Prenotazione.eliminaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, utenteLoggato.getUsername());
+                    }
+                    break;
                 case 4:
                     System.out.println("Logout effettuato.");
                     inMenu = false;
@@ -237,19 +311,18 @@ public class CineMax {
             System.out.println("2. modificare una proiezione");
             System.out.println("3. eliminare una proiezione");
             System.out.println("4. Logout");
-            System.out.println("Scegli un'opzione: ");
-            int scelta = in.nextInt();
-            in.nextLine();
+
+            int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
             switch (scelta) {
                 case 1:
                     Proiezioni.aggiungiProiezione(in, fileCsv, elenco);
                     break;
                 case 2:
-                    Proiezioni.modificaProiezione(fileCsv);
+                    Proiezioni.modificaProiezione(fileCsv, elenco);
                     break;
                 case 3:
-                    Proiezioni.eliminaProiezione(fileCsv);
+                    Proiezioni.eliminaProiezione(fileCsv, elenco);
 
                 case 4:
                     System.out.println("Logout effettuato.");
@@ -261,23 +334,40 @@ public class CineMax {
         }
     }
 
-    private static void menuBigliettaio(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni) {
+    private static void menuBigliettaio(Scanner in, String filePrenotazioni, List<Proiezioni> elenco, java.util.Map<String, Prenotazione> mappaPrenotazioni, String fileCsv, List<Registrati> listaUtenti) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\nMenu bigliettaio");
             System.out.println("1. visuallizare le prenotazioni nella data odierna");
             System.out.println("2. Cercare una prenotazione");
             System.out.println("3. Logout");
-            System.out.println("Scegli un'opzione: ");
-            int scelta = in.nextInt();
-            in.nextLine();
+
+            int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
             switch (scelta) {
                 case 1:
-                    System.out.println("Visualizzazione delle prenotazioni di oggi... ");
+                     System.out.println("\nPRENOTAZIONI DATA ODIERNA: ");
+                     java.time.LocalDate oggi = java.time.LocalDate.now();
+                     java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                     int count = 0;
+                     for (Prenotazione p: mappaPrenotazioni.values()) {
+                         try {
+                             String dataPulita = p.getProiezione().getDataOra().replace("\"", "").trim();
+                             java.time.LocalDateTime dt = java.time.LocalDateTime.parse(dataPulita, formatter);
+                             if (dt.toLocalDate().equals(oggi)) {
+                                 visualizzaDettaglioPrenotazione(p, listaUtenti);
+                                 count++;
+                             }
+                         } catch (Exception e) {
+
+                         }
+                         if (count == 0) {
+                             System.out.println("Nessuna prenotazione programmata per oggi.");
+                         }
+                     }
                     break;
                 case 2:
-                    System.out.println("Ricerca di una prenotazione... ");
+                    Prenotazione.CercaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv, listaUtenti);
                     break;
                 case 3:
                     System.out.println("Logout effettuato.");
@@ -287,6 +377,29 @@ public class CineMax {
                     System.out.println("Scelta non valida");
             }
         }
+    }
+
+    public static Registrati trovaUtentePerUsername (String username, List<Registrati> listaUtenti) {
+        for (Registrati u: listaUtenti) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public static void visualizzaDettaglioPrenotazione(Prenotazione p, List<Registrati> listaUtenti){
+        Registrati u = trovaUtentePerUsername(p.getUsernamenCliente(), listaUtenti);
+        String intestatario = (u != null) ? (u.getNome() + " " + u.getCognome()) : p.getUsernamenCliente();
+        System.out.println("------------------------------------------------");
+        System.out.println("Codice Prenotazione: " + p.getCodice());
+        System.out.println("Cliente:             " + intestatario + " (" + p.getUsernamenCliente() + ")");
+        System.out.println("Film:                " + p.getFilm().getTitolo());
+        System.out.println("Data e ora show:     " + p.getProiezione().getDataOra());
+        System.out.println("Blietti Prenotati:   " + p.getNumBiglietti());
+        System.out.println("Costo Unitario:      " + String.format(Locale.US, "%.2f", p.getFilm().getGenere() + " €"));
+        System.out.println("Costo Totale:        " + String.format(Locale.US, "%.2f", p.getCostoTotale() + " €"));
+        System.out.println("------------------------------------------------");
     }
 }
 
