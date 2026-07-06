@@ -220,7 +220,7 @@ public class CineMax {
                     for (int i=0; i < elenco.size(); i++){
                         Proiezioni pr = elenco.get(i);
                         if (pr.getTitolo().toLowerCase().contains(titoloCercato)){
-                            System.out.println((i + 1) + ". DATA: " + pr.getDataOra()) + " | FILM: " + pr.getTitolo() + " | GENERE: " + pr.getGenere() + " | PREZZO: " + pr.getPrezzo() + " €");
+                            System.out.println((i + 1) + ". DATA: " + pr.getDataOra() + " | FILM: " + pr.getTitolo() + " | GENERE: " + pr.getGenere() + " | PREZZO: " + pr.getPrezzo() + " €");
                             ris++;
                         }
                     }
