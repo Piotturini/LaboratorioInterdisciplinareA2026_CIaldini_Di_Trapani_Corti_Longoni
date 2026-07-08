@@ -29,9 +29,8 @@ public class CineMax {
             System.out.println("2. Registrati come nuovo cliente");
             System.out.println("3. Accedi come guest (Utente non registrato)");
             System.out.println("0: Chiudo l'applicazione");
-            System.out.print("Scegli un'opzione: ");
 
-            int scelta = leggiIntero(in, "Scegli un'opzione");
+            int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
 
             switch (scelta) {
@@ -260,7 +259,6 @@ public class CineMax {
             System.out.println("2. visualizzare le proprie prenotazioni");
             System.out.println("3. modificare e cancellare le proprie prenotazioni");
             System.out.println("4. Logout");
-            System.out.println("Scegli un'opzione: ");
 
             int scelta = leggiIntero(in, "Scegli un'opzione: ");
 
@@ -278,7 +276,7 @@ public class CineMax {
                         }
                     }
                     if (count == 0) {
-                        System.out.println(" Non hai effettuato alcuna prenotazione.");
+                        System.out.println("Non hai effettuato alcuna prenotazione.");
                     }
                     break;
                 case 3:

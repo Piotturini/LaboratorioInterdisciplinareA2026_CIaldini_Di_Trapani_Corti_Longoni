@@ -1,5 +1,6 @@
-
-PRN-72AD5B51;marcolino;Philadelphia;Jonathan Demme;2027-12-19 13:00:00;3;25.50
-PRN-BD598D95;gino;Primal Fear;Gregory Hoblit;2027-12-19 10:00:00;10;80.00
+PRN-3A12817D;dcialdini;Good Will Hunting;Gus Van Sant;2027-12-26 13:00:00;6;51.00
 PRN-3A2683D8;mario;Titanic;James Cameron;2019-02-11 10:00:00;10;65.00
 PRN-E752245F;mario;Titanic;James Cameron;2019-02-11 10:00:00;5;32.50
+PRN-72AD5B51;marcolino;Philadelphia;Jonathan Demme;2027-12-19 13:00:00;3;25.50
+PRN-BD598D95;gino;Primal Fear;Gregory Hoblit;2027-12-19 10:00:00;10;80.00
+

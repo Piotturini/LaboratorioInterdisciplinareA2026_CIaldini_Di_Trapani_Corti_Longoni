@@ -11,3 +11,4 @@ Marco,Esposito,marcolino,130,30/06/1993,Bari,Cliente
 Chiara,Ricci,chiarotta,448,22/10/2002,Genova,Cliente
 Sofia,Bruno,sofia_b,149,14/12/2004,Lecco,Cliente
 Mario,Fumagalli,MarioFg,64,22/10/1998,Napoli,Cliente
+Daniele,Cialdini,dcialdini,401,14/08/2006,Mandello del Lario,Cliente
