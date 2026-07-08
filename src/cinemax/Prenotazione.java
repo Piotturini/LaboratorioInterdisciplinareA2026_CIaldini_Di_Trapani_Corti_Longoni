@@ -262,7 +262,7 @@ public class Prenotazione {
      * @param fileCsv Percorso del file CSV dei film
      */
     public static void creaPrenotazione (java.util.Scanner in, String filePrenotazioni, List<Proiezioni> elencoProiezioni, Map <String, Prenotazione> mappaPrenotazioni, String fileCsv) {
-        Proiezioni.cercaProiezione(fileCsv);
+        Proiezioni.cercaProiezione(elencoProiezioni);
         System.out.println("\nVuoi effettuare una prenotazione per uno di questi film? (si/no):");
         String risposta = in.nextLine().trim().toLowerCase();
         if (!risposta.equals("si")) {
@@ -385,7 +385,7 @@ public class Prenotazione {
         String sceltaCambioSpettacolo = in.nextLine().trim().toLowerCase();
 
         if (!sceltaCambioSpettacolo.isEmpty() && sceltaCambioSpettacolo.equals("si")) {
-            Proiezioni.cercaProiezione(fileCsv);
+            Proiezioni.cercaProiezione(elencoProiezioni);
             System.out.print("Conferma il titolo del nuovo film visto a schermo: ");
             String titoloScelto = in.nextLine().trim();
             System.out.print("Conferma l'orario e la data dello spettacolo (es. yyyy-MM-dd HH:mm:ss): ");

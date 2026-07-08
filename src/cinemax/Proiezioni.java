@@ -178,10 +178,8 @@ public class Proiezioni {
      * @param percorsoFile percorso proiezioni.csv
      * @see #caricaDaCSV(String) 
      */
-    public static void cercaProiezione(String percorsoFile) {
+    public static void cercaProiezione(List<Proiezioni> tutteLeProiezioni) {
         // carichiamo i dati dal file con il metodo già creato
-        List<Proiezioni> tutteLeProiezioni = caricaDaCSV(percorsoFile);
-
         if (tutteLeProiezioni.isEmpty()) {
             System.out.println("Nessuna Proiezione presente nel sistema.");
             return;
