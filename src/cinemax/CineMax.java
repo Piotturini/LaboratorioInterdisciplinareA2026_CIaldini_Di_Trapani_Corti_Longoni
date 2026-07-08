@@ -321,7 +321,7 @@ public class CineMax {
                     break;
                 case 3:
                     Proiezioni.eliminaProiezione(fileCsv, elenco);
-
+                    break;
                 case 4:
                     System.out.println("Logout effettuato.");
                     inMenu = false;
@@ -359,10 +359,11 @@ public class CineMax {
                          } catch (Exception e) {
 
                          }
+                     }
                          if (count == 0) {
                              System.out.println("Nessuna prenotazione programmata per oggi.");
                          }
-                     }
+
                     break;
                 case 2:
                     Prenotazione.CercaPrenotazione(in, filePrenotazioni, elenco, mappaPrenotazioni, fileCsv);
