@@ -10,7 +10,7 @@ package cinemax;
 public class Password {
     private static final int DIM_ALFA = 31;
     private static final int DIM_TAB = 1007;
-    private Utenti utente;
+    private  Utenti utente;
 
     /**
      * Costruisce un oggetto Password associandolo a uno specifico utente
