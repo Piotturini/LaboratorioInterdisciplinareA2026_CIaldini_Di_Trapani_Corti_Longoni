@@ -175,7 +175,7 @@ public class Proiezioni {
      *     <li>INTERVALLO DATE</li>
      *     <li>INTERVALLO PREZZO</li>
      * </ul>
-     * @param percorsoFile percorso proiezioni.csv
+     * @param tutteLeProiezioni percorso proiezioni.csv
      * @see #caricaDaCSV(String) 
      */
     public static void cercaProiezione(List<Proiezioni> tutteLeProiezioni) {
